@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran - MotoBooth</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="/Assets/Frame 12.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: #1a1a1a;
+            background-color: #fcfcfc;
+        }
+
+        /* Navbar */
+        .navbar-custom {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            border: 1px solid #e6e6e6;
+            margin-top: 15px;
+            padding: 15px 30px;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            color: #42567a !important;
+            font-size: 26px;
+            /* Placeholder styles if logo image is not used */
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #555 !important;
+            margin-left: 20px;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #1a1a1a !important;
+        }
+
+        /* Title */
+        .page-title {
+            color: #42567a;
+            font-weight: 800;
+            text-align: center;
+            margin: 50px 0 60px;
+            font-size: 42px;
+        }
+
+        /* Lists */
+        .benefit-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 40px;
+        }
+
+        .benefit-list li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .benefit-list li .icon-box {
+            color: #888;
+            border: 1px solid #888;
+            border-radius: 3px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .benefit-list li .icon-box i {
+            font-size: 10px;
+        }
+
+        /* Cards */
+        .selection-card {
+            border: 1px solid #888;
+            border-radius: 10px;
+            padding: 18px 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .selection-card:hover {
+            border-color: #3ca55c;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .selection-card.active {
+            border: 2px solid #3ca55c;
+            padding: 17px 24px;
+            /* adjust for 2px border */
+        }
+
+        .selection-card-title {
+            font-weight: 700;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .selection-card-price {
+            font-size: 18px;
+            color: #555;
+            margin: 0;
+        }
+
+        .payment-logo {
+            height: 35px;
+            object-fit: contain;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background-color: #f8f9fa;
+            border: 1px solid #888;
+            border-radius: 10px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            min-height: 250px;
+        }
+
+        .summary-title {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: #1a1a1a;
+        }
+
+        /* Button */
+        .btn-bayar {
+            background-color: #3ca55c;
+            color: white;
+            font-weight: 700;
+            border: none;
+            padding: 12px 60px;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background 0.2s;
+            margin-top: 40px;
+        }
+
+        .btn-bayar:hover {
+            background-color: #2d8146;
+            color: white;
+        }
+
+        .btn-bayar:disabled {
+            background-color: #a5d6b4;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container pb-5">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg bg-white navbar-custom">
+            <div class="container-fluid">
+                <!-- Using placeholder styled text for Logo as in motobooth.html -->
+                <a class="navbar-brand" href="motobooth.html">MotoBooth</a>
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <h1 class="page-title">Pembayaran MotoBooth</h1>
+
+        <div class="row mt-5" style="max-width: 1000px; margin: 0 auto;">
+            <!-- Left Column -->
+            <div class="col-md-6 pe-md-5 mb-5 mb-md-0">
+                <h6 class="fw-bold mb-4 fs-6">Langganan MotoBooth dan dapetin akses ke konten Premium:</h6>
+                <ul class="benefit-list">
+                    <li>
+                        <div class="icon-box"><i class="fa-solid fa-check"></i></div>
+                        Langganan MotoBooth dan dapetin<br>akses ke konten Premium:
+                    </li>
+                    <li>
+                        <div class="icon-box"><i class="fa-solid fa-check"></i></div>
+                        Langganan MotoBooth dan dapetin<br>akses ke konten Premium:
+                    </li>
+                    <li>
+                        <div class="icon-box"><i class="fa-solid fa-check"></i></div>
+                        Langganan MotoBooth dan dapetin<br>akses ke konten Premium:
+                    </li>
+                    <li>
+                        <div class="icon-box"><i class="fa-solid fa-check"></i></div>
+                        Langganan MotoBooth dan dapetin<br>akses ke konten Premium:
+                    </li>
+                </ul>
+
+                <h6 class="fw-bold mb-4 mt-5 fs-6">Mau langganan premium untuk berapa bulan?</h6>
+
+                <!-- Packages -->
+                <label class="selection-card package-card" data-package="5" data-price="8000" style="cursor: pointer;">
+                    <div class="d-flex align-items-center">
+                        <input class="form-check-input mt-0 me-3 package-radio" type="radio" name="package_option"
+                            value="5" style="cursor: pointer; width: 1.2em; height: 1.2em;">
+                        <p class="selection-card-title mb-0">5 Hari</p>
+                    </div>
+                    <p class="selection-card-price mb-0">Rp8.000</p>
+                </label>
+
+                <label class="selection-card package-card" data-package="30" data-price="30000"
+                    style="cursor: pointer;">
+                    <div class="d-flex align-items-center">
+                        <input class="form-check-input mt-0 me-3 package-radio" type="radio" name="package_option"
+                            value="30" style="cursor: pointer; width: 1.2em; height: 1.2em;">
+                        <p class="selection-card-title mb-0">30 Hari</p>
+                    </div>
+                    <p class="selection-card-price mb-0">Rp30.000</p>
+                </label>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-6 ps-md-4">
+                <!-- Order Summary -->
+                <div class="order-summary" id="orderSummary">
+                    <h5 class="summary-title">Order Summary</h5>
+                    <div id="summaryContent" class="text-secondary" style="font-size: 15px;">
+                        <p class="mb-0">Silakan pilih paket langganan dan metode pembayaran terlebih dahulu untuk
+                            melihat ringkasan order.</p>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3 mt-4 fs-6">Pembayaran</h6>
+
+                <!-- Payment Methods -->
+                <!-- We add fee variables, assuming QRIS has 1000 fee and BCA has 2500 fee as example -->
+                <label class="selection-card payment-card" data-method="QRIS" data-fee="1000" style="cursor: pointer;">
+                    <div class="d-flex align-items-center w-100">
+                        <input class="form-check-input mt-0 me-3 payment-radio" type="radio" name="payment_method"
+                            value="QRIS" style="cursor: pointer; width: 1.2em; height: 1.2em;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" alt="QRIS"
+                            class="payment-logo">
+                    </div>
+                </label>
+
+                <label class="selection-card payment-card" data-method="BCA" data-fee="2500" style="cursor: pointer;">
+                    <div class="d-flex align-items-center w-100">
+                        <input class="form-check-input mt-0 me-3 payment-radio" type="radio" name="payment_method"
+                            value="BCA" style="cursor: pointer; width: 1.2em; height: 1.2em;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" alt="BCA"
+                            class="payment-logo" style="height: 25px;">
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-bayar" id="btnBayar" disabled>Bayar</button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // State variables
+        let selectedPackage = null;
+        let selectedPrice = 0;
+        let selectedMethod = null;
+        let adminFee = 0;
+
+        // Elements
+        const packageCards = document.querySelectorAll('.package-card');
+        const paymentCards = document.querySelectorAll('.payment-card');
+        const summaryContent = document.getElementById('summaryContent');
+        const btnBayar = document.getElementById('btnBayar');
+
+        // Helper function to format currency
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        };
+
+        // Update Summary dynamically
+        const updateSummary = () => {
+            if (!selectedPackage || !selectedMethod) {
+                summaryContent.innerHTML = '<p class="mb-0">Silakan pilih paket langganan dan metode pembayaran terlebih dahulu untuk melihat ringkasan order.</p>';
+                btnBayar.disabled = true;
+                return;
+            }
+
+            let html = `
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-secondary">Paket Premium (${selectedPackage} Hari)</span>
+                    <span class="fw-medium text-dark">${formatRupiah(selectedPrice)}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-secondary">Biaya Admin (${selectedMethod})</span>
+                    <span class="fw-medium text-dark">${formatRupiah(adminFee)}</span>
+                </div>
+                <hr class="my-4" style="border-color: #bcbcbc;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold text-dark fs-6">Total Pembayaran</span>
+                    <span class="fw-bold text-dark fs-5">${formatRupiah(selectedPrice + adminFee)}</span>
+                </div>
+            `;
+
+            btnBayar.disabled = false;
+            summaryContent.innerHTML = html;
+        };
+
+        // Event Listeners for Package Cards
+        packageCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Remove active class from all
+                packageCards.forEach(c => c.classList.remove('active'));
+                // Add to clicked
+                card.classList.add('active');
+
+                // Update state
+                selectedPackage = card.getAttribute('data-package');
+                selectedPrice = parseInt(card.getAttribute('data-price'));
+
+                updateSummary();
+            });
+        });
+
+        // Event Listeners for Payment Cards
+        paymentCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Remove active class from all
+                paymentCards.forEach(c => c.classList.remove('active'));
+                // Add to clicked
+                card.classList.add('active');
+
+                // Update state
+                selectedMethod = card.getAttribute('data-method');
+                adminFee = parseInt(card.getAttribute('data-fee'));
+
+                updateSummary();
+            });
+        });
+
+        // Bayar Action
+        btnBayar.addEventListener('click', () => {
+            alert(\`Memproses pembayaran melalui \${selectedMethod} dengan total \${formatRupiah(selectedPrice + adminFee)}\`);
+            // Add redirection logic here, e.g. window.location.href = 'success.html';
+        });
+    </script>
+</body>
+
+</html>

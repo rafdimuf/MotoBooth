@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoBooth - Result & Download</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: #1a1a1a;
+            background-color: #fcfcfc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar-custom {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            border: 1px solid #e6e6e6;
+            margin-top: 15px;
+            padding: 10px 30px;
+        }
+
+        .navbar-brand-text {
+            font-weight: 800;
+            color: #42567a !important;
+            font-size: 26px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #555 !important;
+            margin-left: 20px;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #1a1a1a !important;
+        }
+
+        /* Icon Profile */
+        .profile-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-left: 20px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .profile-icon:hover {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        /* Result Area */
+        .result-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 0 80px 0;
+            gap: 50px;
+        }
+
+        /* Photostrip UI */
+        .photostrip-wrapper {
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 15px;
+            width: 260px;
+            /* Lebar frame mirip di desain */
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transform: scale(1.05);
+            /* Sedikit diperbesar agar enak dilihat */
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .accessory-rendered {
+            position: absolute;
+            font-size: 26px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .photo-block {
+            width: 100%;
+            aspect-ratio: 16/10;
+            /* Sama dengan ratio kamera */
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .photo-block img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photostrip-bottom {
+            height: 70px;
+            /* Space kosong di bawah strip */
+            background-color: white;
+        }
+
+        /* Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .btn-outline-custom {
+            flex: 1;
+            background-color: white;
+            color: #1a1a1a;
+            font-weight: 700;
+            padding: 16px 0;
+            border-radius: 12px;
+            border: 1.5px solid #1a1a1a;
+            transition: all 0.2s;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            /* Drop shadow keras (hard shadow) menyesuaikan style UI masa kini */
+            box-shadow: 0 4px 0px rgba(0, 0, 0, 0.8);
+        }
+
+        .btn-outline-custom:hover {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0px rgba(0, 0, 0, 0.8);
+            color: #1a1a1a;
+        }
+
+        .btn-outline-custom:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg bg-white navbar-custom">
+            <div class="container-fluid">
+                <a class="navbar-brand navbar-brand-text" href="motobooth.html">MotoBooth</a>
+
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Package</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+                        <li class="nav-item">
+                            <a href="#" class="profile-icon">
+                                <i class="fa-solid fa-user"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container result-container">
+
+        <!-- Photostrip Display -->
+        <div class="photostrip-wrapper" id="photostripDOM">
+            <!-- Blok ini akan digantikan oleh foto-foto dari sesi kamera -->
+            <div class="photo-block" id="pb-0">[Photo 1]</div>
+            <div class="photo-block" id="pb-1">[Photo 2]</div>
+            <div class="photo-block" id="pb-2">[Photo 3]</div>
+            <div class="photostrip-bottom"></div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="action-buttons">
+            <!-- Tombol Retake mengembalikan user ke halaman foto -->
+            <a href="photoPage.html" class="btn-outline-custom">Retake</a>
+            <!-- Tombol Download akan memicu render canvas ke JPG -->
+            <button id="btnDownload" class="btn-outline-custom">Download</button>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Logika Render & Download -->
+    <script>
+        // Ambil data foto dari sessionStorage (yang disimpan di photoPage.html sebelumnya)
+        const storedPhotosStr = sessionStorage.getItem('motobooth_photos');
+        let photos = [];
+
+        if (storedPhotosStr) {
+            photos = JSON.parse(storedPhotosStr);
+        }
+
+        // Ambil konfigurasi frame
+        const frameConfigStr = localStorage.getItem('motobooth_frame_config');
+        let frameConfig = { backgroundColor: '#ffffff', accessories: [] };
+        if (frameConfigStr) {
+            frameConfig = JSON.parse(frameConfigStr);
+        }
+
+        const photostripDOM = document.getElementById('photostripDOM');
+        photostripDOM.style.backgroundColor = frameConfig.backgroundColor;
+        
+        // Render accessories di DOM preview
+        frameConfig.accessories.forEach(acc => {
+            const el = document.createElement('div');
+            el.className = 'accessory-rendered';
+            el.innerHTML = acc.html;
+            el.style.left = (acc.leftPercent * 100) + '%';
+            el.style.top = (acc.topPercent * 100) + '%';
+            photostripDOM.appendChild(el);
+        });
+
+        // Tampilkan ke DOM HTML Preview
+        for (let i = 0; i < 3; i++) {
+            const block = document.getElementById(`pb-${i}`);
+            if (photos[i]) {
+                block.innerHTML = `<img src="${photos[i]}" alt="Photo ${i + 1}">`;
+            } else {
+                // Jika kosong/tidak ada foto (fallback preview)
+                block.innerHTML = `[Kosong]`;
+            }
+        }
+
+        // Fungsi Render Canvas & Download (agar jadi 1 buah image utuh bersusun)
+        document.getElementById('btnDownload').addEventListener('click', () => {
+            if (photos.length === 0) {
+                alert('Tidak ada foto yang tersedia untuk didownload. Silakan klik Retake terlebih dahulu.');
+                return;
+            }
+
+            // Buat elemen canvas secara programatik (tersembunyi) 
+            // untuk menyatukan gambar-gambar layaknya photostrip fisik.
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Atur resolusi kanvas final (misal HD vertikal dengan lebar 800px)
+            const frameWidth = 800;
+            const padding = 45; // Jarak/batas putih kiri-kanan
+            const gap = 30; // Jarak spasial antar foto
+
+            // Dimensi foto menyesuaikan rasio dari layout (16:10)
+            const photoWidth = frameWidth - (padding * 2);
+            const photoHeight = photoWidth * (10 / 16);
+
+            const bottomSpace = 250; // Ruang ekstra putih di bagian bawah photostrip
+
+            // Total tinggi frame = padding atas + (tinggi foto * jumlah) + (gap * selisih) + ruang bawah
+            const frameHeight = padding + (photoHeight * 3) + (gap * 2) + bottomSpace;
+
+            canvas.width = frameWidth;
+            canvas.height = frameHeight;
+
+            // 1. Warnai background frame
+            ctx.fillStyle = frameConfig.backgroundColor || '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Opsional: Beri batas tipis warna abu-abu di sekeliling canvas jika diinginkan
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
+
+            // Helper Function: Menggambar 1 foto secara async ke kanvas
+            const drawImageToCanvas = (base64Src, yPos) => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Gambar pinggiran tipis pada setiap foto (mirip bingkai dalam bingkai)
+                        ctx.strokeStyle = '#cccccc';
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(padding - 1, yPos - 1, photoWidth + 2, photoHeight + 2);
+
+                        // Hitung dimensi gambar untuk efek object-fit: cover
+                        const imgRatio = img.width / img.height;
+                        const canvasRatio = photoWidth / photoHeight;
+
+                        let sWidth, sHeight, sx, sy;
+
+                        if (imgRatio > canvasRatio) {
+                            // Gambar aslinya lebih lebar proporsinya dibanding frame -> potong kiri-kanan
+                            sHeight = img.height;
+                            sWidth = img.height * canvasRatio;
+                            sx = (img.width - sWidth) / 2;
+                            sy = 0;
+                        } else {
+                            // Gambar aslinya lebih tinggi proporsinya dibanding frame -> potong atas-bawah
+                            sWidth = img.width;
+                            sHeight = img.width / canvasRatio;
+                            sx = 0;
+                            sy = (img.height - sHeight) / 2;
+                        }
+
+                        // Gambar file aslinya (crop dan scale)
+                        ctx.drawImage(img, sx, sy, sWidth, sHeight, padding, yPos, photoWidth, photoHeight);
+                        resolve();
+                    };
+                    img.onerror = () => reject(new Error('Gagal memuat gambar'));
+                    img.src = base64Src;
+                });
+            };
+
+            // Fungsi eksekusi utama: Render semua foto & Paksa Unduh
+            async function renderAndDownload() {
+                const btn = document.getElementById('btnDownload');
+                const originalText = btn.innerText;
+
+                try {
+                    // Efek loading sementara pada tombol
+                    btn.innerText = "Memproses...";
+                    btn.disabled = true;
+
+                    // Loop & susun masing-masing foto dari elemen pertama ke bawah
+                    for (let i = 0; i < photos.length; i++) {
+                        if (photos[i]) {
+                            const yPosition = padding + (i * (photoHeight + gap));
+                            await drawImageToCanvas(photos[i], yPosition);
+                        }
+                    }
+
+                    // === Tambahkan Accessories ke Canvas ===
+                    frameConfig.accessories.forEach(acc => {
+                        if (acc.unicode) {
+                            ctx.fillStyle = acc.color;
+                            const canvasFontSize = 90; 
+                            ctx.font = '900 ' + canvasFontSize + 'px ' + acc.fontFamily;
+                            ctx.textBaseline = 'top';
+                            
+                            const x = acc.leftPercent * canvas.width;
+                            const y = acc.topPercent * canvas.height;
+                            
+                            ctx.fillText(acc.unicode, x, y);
+                        }
+                    });
+
+                    // === Tambahkan Ornamen Teks MotoBooth ===
+                    // Desain font
+                    ctx.fillStyle = '#1a1a1a';
+                    ctx.font = 'bold 50px Outfit, sans-serif';
+                    ctx.textBaseline = 'alphabetic'; // reset textBaseline
+                    ctx.textAlign = 'center';
+                    ctx.fillText('MotoBooth', frameWidth / 2, frameHeight - 120);
+
+                    // Cetak waktu atau tag (tanggal hari ini)
+                    ctx.font = '30px Outfit, sans-serif';
+                    ctx.fillStyle = '#555555';
+                    const today = new Date().toLocaleDateString('id-ID');
+                    ctx.fillText(today, frameWidth / 2, frameHeight - 60);
+
+                    // === Memicu/Trigger Proses Unduh ===
+                    // Konversi isi grafis dalam kanvas menjadi file .JPG
+                    const finalImageUrl = canvas.toDataURL('image/jpeg', 0.95);
+
+                    const link = document.createElement('a');
+                    link.download = `MotoBooth_Result_${new Date().getTime()}.jpg`;
+                    link.href = finalImageUrl;
+                    document.body.appendChild(link); // Penting untuk Firefox
+                    link.click();
+                    document.body.removeChild(link);
+
+                } catch (err) {
+                    console.error("Gagal menyatukan photostrip", err);
+                    alert("Mohon maaf, sistem gagal memproses gambar untuk di-download. Silakan coba lagi.");
+                } finally {
+                    // Mengembalikan keadaan tombol seperti semula
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            renderAndDownload();
+        });
+    </script>
+</body>
+
+</html>

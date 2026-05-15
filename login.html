@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MotoBooth</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FavIcon -->
+    <link rel="shortcut icon" href="Assets/Frame 12.png" type="image/x-icon">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-font: 'Outfit', sans-serif;
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --bg-color: #ffffff;
+            --input-border: #cccccc;
+            --visual-bg: #f5f4ef;
+            /* Light beige matching the image */
+            --link-blue: #6385cd;
+            /* Blueish color for 'Login' and 'OR' */
+            --fb-blue: #1877F2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--primary-font);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ----- Header & Navbar ----- */
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .navbar {
+            width: 100%;
+            max-width: 1250px;
+            background: #ffffff;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            /* Shadow mapping the floating pill look */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: #42567a;
+            /* Color matching the other page */
+            line-height: 1;
+            letter-spacing: -0.5px;
+            margin-left: 10px;
+        }
+
+        .logo span {
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 45px;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #333333;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links li a:hover {
+            color: #000;
+        }
+
+        /* ----- Main Container ----- */
+        .main-content {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto 40px;
+            padding: 0 20px;
+            gap: 60px;
+            flex: 1;
+            /* Stretch to fill remaining height */
+        }
+
+        /* ----- Left Column: Login Form ----- */
+        .login-section {
+            flex: 0.9;
+            padding-top: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 20px;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 18px 15px;
+            border: 1px solid #bfbfbf;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .form-group input:focus {
+            border-color: #777;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        /* Custom Checkbox */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            user-select: none;
+            color: #1a1a1a;
+        }
+
+        .checkbox-label input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            height: 20px;
+            width: 20px;
+            background-color: transparent;
+            border: 2.5px solid #000;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .checkbox-label input:checked~.checkmark {
+            background-color: #000;
+            border-color: #000;
+        }
+
+        .checkmark:after {
+            content: "";
+            display: none;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            margin-bottom: 3px;
+            /* slight adjustment for optical center */
+        }
+
+        .checkbox-label input:checked~.checkmark:after {
+            display: block;
+        }
+
+        .forgot-password {
+            color: #1a1a1a;
+            text-decoration: underline;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: transparent;
+            border: 1px solid #d9d9d9;
+            border-radius: 8px;
+            color: var(--link-blue);
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+
+        .login-btn:hover {
+            background-color: #fcfcfc;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin-bottom: 35px;
+            color: var(--link-blue);
+            font-size: 16px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .divider span {
+            padding: 0 20px;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .social-btn {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: #fff;
+            border: 1px solid #ececec;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            /* Noticeable shadow for social buttons */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .social-btn.google {
+            /* Handled by SVG image */
+        }
+
+        .social-btn.apple {
+            color: #000;
+        }
+
+        .social-btn.facebook {
+            background-color: var(--fb-blue);
+            color: white;
+            border: none;
+        }
+
+        .register-text {
+            text-align: center;
+            font-size: 16px;
+            color: #1a1a1a;
+        }
+
+        .register-text a {
+            color: #000;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        /* ----- Right Column: Visual Area ----- */
+        .visual-section {
+            flex: 1.1;
+            background-color: var(--visual-bg);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 600px;
+            overflow: hidden;
+            padding: 40px;
+        }
+
+        .illustration-placeholder {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .placeholder-box {
+            border: 2px dashed #d1ceca;
+            border-radius: 10px;
+            padding: 30px 40px;
+            color: #a09d97;
+            font-size: 16px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .visual-footer-text {
+            text-align: center;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            line-height: 1.8;
+            color: #000;
+            margin-top: 30px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+                margin-top: 0;
+            }
+
+            .login-section {
+                padding-top: 20px;
+                max-width: 500px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .nav-links {
+                display: none;
+                /* Hide on mobile for simplicity, similar to the landing page */
+            }
+
+            .visual-section {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <!-- Using styled text to mimic a logo, since there is no image asset provided -->
+                <span style="font-size: 24px;">MotoBooth</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#">About</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Package</a></li>
+                <li><a href="#">Log In</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+        <!-- Left Side: Login Form -->
+        <section class="login-section">
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password">
+            </div>
+
+            <div class="form-options">
+                <label class="checkbox-label">
+                    <input type="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Keep me logged in
+                </label>
+                <a href="#" class="forgot-password">Forgot password?</a>
+            </div>
+
+            <button type="button" class="login-btn">Login</button>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <div class="social-buttons">
+                <!-- Google Icon -->
+                <a href="#" class="social-btn google">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
+                        width="30">
+                </a>
+
+                <!-- Apple Icon -->
+                <a href="#" class="social-btn apple">
+                    <i class="fa-brands fa-apple"></i>
+                </a>
+
+                <!-- Facebook Icon -->
+                <a href="#" class="social-btn facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+            </div>
+
+            <p class="register-text">
+                Not Registered Yet? <a href="#">Create an Account</a>
+            </p>
+        </section>
+
+        <!-- Right Side: Visual/Image Placeholder -->
+        <section class="visual-section">
+            <!-- Illustration Area Placeholder based on user request ('tampilannya', without 'ilustrasinya') -->
+            <div class="illustration-placeholder">
+                <div class="placeholder-box">
+                    <i class="fa-regular fa-image"
+                        style="font-size: 32px; margin-bottom: 15px; color: #b5b5b5;"></i><br>
+                    [Collage Illustration Area]
+                </div>
+            </div>
+
+            <!-- Bottom Text from the image -->
+            <div class="visual-footer-text">
+                <div>ESTILISMO DE MODA</div>
+                <div>F.D. SCHOOL</div>
+                <div>CURSO 2022-23</div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+
+</html>

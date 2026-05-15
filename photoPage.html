@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoBooth - Virtual PhotoBooth</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: #1a1a1a;
+            background-color: #fcfcfc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar-custom {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            border: 1px solid #e6e6e6;
+            margin-top: 15px;
+            padding: 10px 30px;
+        }
+
+        .navbar-brand-text {
+            font-weight: 800;
+            color: #42567a !important;
+            font-size: 26px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #555 !important;
+            margin-left: 20px;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #1a1a1a !important;
+        }
+
+        /* Icon Profile */
+        .profile-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-left: 20px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .profile-icon:hover {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        /* Camera Area */
+        .camera-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+            gap: 20px;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 20px;
+        }
+
+        .badge-custom {
+            background-color: #dcdcdc;
+            color: #1a1a1a;
+            font-weight: 600;
+            padding: 8px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-select {
+            background-color: transparent;
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            color: #1a1a1a;
+            cursor: pointer;
+            outline: none;
+            padding-right: 5px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .timer-select-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .timer-select-wrapper::after {
+            content: '\f0d7';
+            font-family: 'FontAwesome';
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 16/10;
+            background-color: #f0f0f0;
+            border: 1px solid #999;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        #camera {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            /* Efek Cermin */
+            background-color: #000;
+        }
+
+        .camera-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 150px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            display: none;
+            /* Hidden default */
+        }
+
+        .flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .flash-anim {
+            animation: flash 0.6s ease-out;
+        }
+
+        @keyframes flash {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Thumbnails area for taken photos */
+        .thumbnails-container {
+            display: flex;
+            gap: 15px;
+            height: 90px;
+            margin-top: 5px;
+            justify-content: center;
+        }
+
+        .thumbnail-box {
+            height: 100%;
+            aspect-ratio: 16/10;
+            background-color: #e6e6e6;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .thumbnail-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .thumbnail-number {
+            position: absolute;
+            bottom: 5px;
+            right: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+            z-index: 2;
+        }
+
+        /* Buttons */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            margin-bottom: 40px;
+        }
+
+        .btn-action {
+            background-color: #dcdcdc;
+            color: #1a1a1a;
+            font-weight: 700;
+            padding: 14px 45px;
+            border-radius: 8px;
+            border: none;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .btn-action:hover:not(:disabled) {
+            background-color: #c8c8c8;
+            transform: translateY(-2px);
+        }
+
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary-action {
+            background-color: #3ddc68;
+            /* Green for finish */
+            color: white;
+            display: none;
+        }
+
+        .btn-primary-action:hover {
+            background-color: #34c45b;
+        }
+
+        .btn-danger-action {
+            background-color: #ff6b6b;
+            color: white;
+            display: none;
+        }
+
+        .btn-danger-action:hover {
+            background-color: #ee5253;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg bg-white navbar-custom">
+            <div class="container-fluid">
+                <a class="navbar-brand navbar-brand-text" href="motobooth.html">MotoBooth</a>
+
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Package</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+                        <li class="nav-item">
+                            <a href="#" class="profile-icon">
+                                <i class="fa-solid fa-user"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content: PhotoBooth -->
+    <div class="container camera-container">
+        <!-- Indikator Status & Pemilih Timer -->
+        <div class="status-bar">
+            <div class="badge-custom"><span id="photoCount">0</span>/3</div>
+            <div class="badge-custom">
+                <i class="fa-regular fa-clock fs-5"></i>
+                <div class="timer-select-wrapper">
+                    <select id="timerSelect" class="timer-select">
+                        <option value="3">3s</option>
+                        <option value="4">4s</option>
+                        <option value="5">5s</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layar Kamera -->
+        <div class="video-wrapper">
+            <div class="camera-placeholder" id="cameraPlaceholder">
+                <i class="fa-solid fa-video fs-1 mb-2"></i>
+                <p>Meminta akses kamera...</p>
+            </div>
+            <video id="camera" autoplay playsinline></video>
+
+            <!-- Overlay Timer -->
+            <div class="countdown-overlay" id="countdownOverlay">3</div>
+
+            <!-- Overlay Flash/Jepret -->
+            <div class="flash-overlay" id="flashOverlay"></div>
+
+            <!-- Canvas Tersembunyi untuk mengambil gambar -->
+            <canvas id="canvas" style="display: none;"></canvas>
+        </div>
+
+        <!-- Thumbnail Foto yang Diambil -->
+        <div class="thumbnails-container" id="thumbnailsContainer">
+            <!-- 3 Kotak Kosong sebagai placeholder -->
+            <div class="thumbnail-box" id="thumb-0">1</div>
+            <div class="thumbnail-box" id="thumb-1">2</div>
+            <div class="thumbnail-box" id="thumb-2">3</div>
+        </div>
+
+        <!-- Tombol Kontrol -->
+        <div class="controls">
+            <!-- Undo Button -->
+            <button class="btn-action btn-danger-action" id="btnUndo">
+                <i class="fa-solid fa-rotate-left me-2"></i> Stop & Undo
+            </button>
+            <!-- Start Auto Capture Button -->
+            <button class="btn-action" id="btnCapture">Mulai Foto Otomatis</button>
+            <!-- Finish Button -->
+            <button class="btn-action btn-primary-action" id="btnFinish">
+                Lanjut <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Logika Virtual PhotoBooth Otomatis -->
+    <script>
+        const video = document.getElementById('camera');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const btnCapture = document.getElementById('btnCapture');
+        const btnUndo = document.getElementById('btnUndo');
+        const btnFinish = document.getElementById('btnFinish');
+        const timerSelect = document.getElementById('timerSelect');
+
+        const countdownOverlay = document.getElementById('countdownOverlay');
+        const flashOverlay = document.getElementById('flashOverlay');
+        const photoCountDisplay = document.getElementById('photoCount');
+        const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+
+        const MAX_PHOTOS = 3;
+        let photos = []; // Menyimpan data gambar (Base64)
+        let isCountingDown = false;
+        let stream = null;
+
+        // Variabel untuk mengontrol interval agar bisa dihentikan (Undo)
+        let countdownInterval = null;
+        let nextPhotoTimeout = null;
+
+        // Inisialisasi Kamera Web
+        async function initCamera() {
+            try {
+                // Minta akses kamera
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" },
+                    audio: false
+                });
+                video.srcObject = stream;
+
+                // Sembunyikan placeholder setelah kamera aktif
+                video.onloadedmetadata = () => {
+                    cameraPlaceholder.style.display = 'none';
+                };
+            } catch (err) {
+                console.error("Gagal mengakses kamera: ", err);
+                cameraPlaceholder.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-danger fs-1 mb-2"></i><br>Tidak dapat mengakses kamera.<br>Pastikan Anda telah memberikan izin di browser.`;
+            }
+        }
+
+        initCamera();
+
+        // Event saat tombol Mulai ditekan
+        btnCapture.addEventListener('click', () => {
+            // Cegah jika sudah maksimal atau sedang hitung mundur
+            if (photos.length >= MAX_PHOTOS || isCountingDown || !stream) return;
+
+            // Kunci pemilih timer selama proses berjalan
+            timerSelect.disabled = true;
+
+            startAutoCapture();
+        });
+
+        // Fungsi Pengambilan Foto Berurutan
+        function startAutoCapture() {
+            if (photos.length >= MAX_PHOTOS) {
+                timerSelect.disabled = false;
+                return;
+            }
+
+            isCountingDown = true;
+            btnCapture.style.display = 'none';
+
+            // Memunculkan tombol undo sebagai "Stop & Undo"
+            btnUndo.style.display = 'inline-block';
+            btnUndo.disabled = false;
+
+            let timeLeft = parseInt(timerSelect.value);
+            countdownOverlay.style.display = 'flex';
+            countdownOverlay.innerText = timeLeft;
+
+            // Proses Countdown
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    countdownOverlay.innerText = timeLeft;
+                } else {
+                    // Saat hitungan mencapai nol
+                    clearInterval(countdownInterval);
+                    countdownOverlay.style.display = 'none';
+
+                    takePhoto(); // Ambil gambar
+                    isCountingDown = false;
+
+                    // Lanjut otomatis ke foto berikutnya jika belum maksimal
+                    if (photos.length < MAX_PHOTOS) {
+                        // Jeda 1.5 detik agar pengguna bisa melihat hasil sebentar
+                        nextPhotoTimeout = setTimeout(() => {
+                            startAutoCapture();
+                        }, 1500);
+                    } else {
+                        timerSelect.disabled = false; // Buka kunci pemilih timer
+                    }
+                }
+            }, 1000);
+        }
+
+        // Fungsi Jepret (Ambil gambar dari video ke canvas)
+        function takePhoto() {
+            // Animasi kilat (Flash)
+            flashOverlay.classList.remove('flash-anim');
+            void flashOverlay.offsetWidth; // Memicu ulang reflow DOM agar animasi restart
+            flashOverlay.classList.add('flash-anim');
+
+            // Atur ukuran canvas sesuai dengan dimensi video stream
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Gambar frame dari video ke canvas (Mirror effect)
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Ekstrak data gambar
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            photos.push(dataUrl);
+
+            updateUI();
+        }
+
+        // Fungsi Stop & Undo (Hentikan otomatisasi dan hapus foto terakhir)
+        btnUndo.addEventListener('click', () => {
+            // Hentikan proses hitung mundur dan jeda yang sedang berjalan
+            if (countdownInterval) clearInterval(countdownInterval);
+            if (nextPhotoTimeout) clearTimeout(nextPhotoTimeout);
+
+            // Sembunyikan layar countdown
+            countdownOverlay.style.display = 'none';
+            isCountingDown = false;
+            timerSelect.disabled = false; // Buka kunci pemilih timer
+
+            // Hapus foto terakhir dari array jika ada
+            if (photos.length > 0) {
+                photos.pop();
+            }
+
+            updateUI();
+        });
+
+        // Fungsi Finish/Lanjut
+        btnFinish.addEventListener('click', () => {
+            // Menyimpan data array foto ke SessionStorage untuk diakses halaman result
+            sessionStorage.setItem('motobooth_photos', JSON.stringify(photos));
+
+            // Mematikan lampu kamera sebelum pindah halaman
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+
+            // Redirect ke halaman hasil
+            window.location.href = 'resultPage.html';
+        });
+
+        // Update antarmuka setiap kali ada foto ditambah/dihapus
+        function updateUI() {
+            // Update angka indikator
+            photoCountDisplay.innerText = photos.length;
+
+            // Render Thumbnails
+            for (let i = 0; i < MAX_PHOTOS; i++) {
+                const thumbBox = document.getElementById(`thumb-${i}`);
+                if (photos[i]) {
+                    thumbBox.innerHTML = `<img src="${photos[i]}" alt="Foto ${i + 1}"> <span class="thumbnail-number">${i + 1}</span>`;
+                } else {
+                    thumbBox.innerHTML = i + 1; // Kembali ke angka default
+                }
+            }
+
+            // Tampilkan tombol Undo jika ada minimal 1 foto ATAU proses sedang berjalan
+            if (photos.length > 0 || isCountingDown) {
+                btnUndo.style.display = 'inline-block';
+                btnUndo.disabled = false;
+            } else {
+                btnUndo.style.display = 'none';
+            }
+
+            // Jika sudah 3 foto, hilangkan tombol Start Capture dan tampilkan tombol Lanjut
+            if (photos.length >= MAX_PHOTOS) {
+                btnCapture.style.display = 'none';
+                btnFinish.style.display = 'inline-block';
+            } else if (!isCountingDown) {
+                // Tampilkan tombol "Mulai" lagi hanya jika tidak sedang menghitung mundur
+                btnCapture.style.display = 'inline-block';
+                btnCapture.disabled = false;
+                btnFinish.style.display = 'none';
+            }
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoBooth - Choose Frame</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="/Assets/Frame 12.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: #1a1a1a;
+            background-color: #fcfcfc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar (Disamakan dengan halaman sebelumnya) */
+        .navbar-custom {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            border: 1px solid #e6e6e6;
+            margin-top: 15px;
+            padding: 10px 30px;
+        }
+
+        .navbar-brand-text {
+            font-weight: 800;
+            color: #42567a !important;
+            font-size: 26px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #555 !important;
+            margin-left: 20px;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #1a1a1a !important;
+        }
+
+        /* Icon Profile */
+        .profile-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-left: 20px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .profile-icon:hover {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        /* Frame Options */
+        .frame-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            padding: 60px 0;
+        }
+
+        .frame-card {
+            background: white;
+            border: 1px solid #777;
+            /* Border bawaan yang tipis */
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 220px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+        }
+
+        /* Kotak untuk tempat foto di dalam frame */
+        .photo-block {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 12px;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        /* Space kosong di bawah frame ala photostrip */
+        .frame-bottom {
+            height: 50px;
+        }
+
+        /* Hover & Active/Selected states dengan Animasi */
+        .frame-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            border-color: #555;
+        }
+
+        /* Animasi Pop-out ketika Frame Dipilih */
+        .frame-card.active {
+            border-color: #42567a;
+            border-width: 3px;
+            transform: scale(1.08) translateY(-5px);
+            /* Membesar & sedikit naik */
+            box-shadow: 0 15px 35px rgba(66, 86, 122, 0.25);
+            padding: 13px;
+            /* Kompensasi border yang menebal agar ukuran dalam tidak berubah */
+            z-index: 10;
+        }
+
+        /* Animasi Badge Centang */
+        .check-badge {
+            position: absolute;
+            top: -18px;
+            right: -18px;
+            background-color: #42567a;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            opacity: 0;
+            transform: scale(0) rotate(-45deg);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .frame-card.active .check-badge {
+            opacity: 1;
+            transform: scale(1) rotate(0);
+        }
+
+        /* Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+
+        .btn-make-frame {
+            background-color: #fbbc05;
+            /* Warna Kuning Orange */
+            color: #1a1a1a;
+            font-weight: 600;
+            padding: 12px 35px;
+            border-radius: 6px;
+            border: none;
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+
+        .btn-make-frame:hover {
+            background-color: #e3aa04;
+            transform: translateY(-2px);
+        }
+
+        .btn-lanjut {
+            background-color: #3ddc68;
+            /* Warna Hijau Terang */
+            color: white;
+            font-weight: 600;
+            padding: 12px 45px;
+            border-radius: 6px;
+            border: none;
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+
+        .btn-lanjut:hover {
+            background-color: #34c45b;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg bg-white navbar-custom">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <img src="Assets/logoMotoBooth.png" alt="" style="width: 60%;">
+                </div>
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="payment.html">Package</a></li>
+                        <li class="nav-item"><a class="nav-link" href="login.html">Log In</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content: Pilihan Frame -->
+    <div class="container frame-container">
+        <div class="row w-100 justify-content-center align-items-center g-4">
+
+            <!-- Frame 1 -->
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="frame-card" onclick="selectFrame(this)">
+                    <!-- Badge centang yang akan muncul saat aktif -->
+                    <div class="check-badge"><i class="fa-solid fa-check"></i></div>
+
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="frame-bottom"></div>
+                </div>
+            </div>
+
+            <!-- Frame 2 -->
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="frame-card" onclick="selectFrame(this)">
+                    <div class="check-badge"><i class="fa-solid fa-check"></i></div>
+
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="frame-bottom"></div>
+                </div>
+            </div>
+
+            <!-- Frame 3 -->
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="frame-card" onclick="selectFrame(this)">
+                    <div class="check-badge"><i class="fa-solid fa-check"></i></div>
+
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="frame-bottom"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Buttons: Lanjut & Make Your Frame -->
+    <div class="container action-buttons">
+        <a href="makeYourFrame.html"><button class="btn-make-frame">Make Your Frame</button></a>
+        <a href="photoPage.html"><button class="btn-lanjut" id="btnLanjut">Lanjut</button></a>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script untuk logika pilihan frame -->
+    <script>
+        function selectFrame(selectedElement) {
+            // Hapus kelas 'active' dari semua frame terlebih dahulu
+            const frames = document.querySelectorAll('.frame-card');
+            frames.forEach(frame => {
+                frame.classList.remove('active');
+            });
+
+            // Tambahkan kelas 'active' hanya ke frame yang baru saja diklik
+            selectedElement.classList.add('active');
+        }
+
+        // Opsional: Cek apakah ada frame yang dipilih sebelum lanjut
+        document.getElementById('btnLanjut').addEventListener('click', function () {
+            const selected = document.querySelector('.frame-card.active');
+            if (selected) {
+                // Lanjut ke halaman selanjutnya
+                window.location.href = 'photoPage.html'; // contoh tujuan
+            } else {
+                alert('Silakan pilih frame terlebih dahulu!');
+            }
+        });
+    </script>
+</body>
+
+</html>
