@@ -372,7 +372,14 @@
                             const x = acc.leftPercent * canvas.width;
                             const y = acc.topPercent * canvas.height;
                             
-                            ctx.fillText(acc.unicode, x, y);
+                            // Parse string literals (e.g. "\\f564" or "\\F564") to actual character if needed
+                            let drawChar = acc.unicode;
+                            if (drawChar.length > 1 && drawChar.startsWith('\\')) {
+                                let hex = drawChar.replace(/\\u?/i, '');
+                                drawChar = String.fromCharCode(parseInt(hex, 16));
+                            }
+                            
+                            ctx.fillText(drawChar, x, y);
                         }
                     });
 
