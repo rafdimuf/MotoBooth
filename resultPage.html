@@ -84,19 +84,23 @@
 
         /* Photostrip UI */
         .photostrip-wrapper {
+            --frame-scale: 0.35; /* Kita sesuaikan skalanya agar pas di halaman */
             background-color: white;
             border: 1px solid #ccc;
-            padding: 15px;
-            width: 260px;
-            /* Lebar frame mirip di desain */
+            width: calc(800px * var(--frame-scale));
+            height: calc(1686px * var(--frame-scale));
+            padding-left: calc(93px * var(--frame-scale));
+            padding-right: calc(93px * var(--frame-scale));
+            padding-top: calc(100px * var(--frame-scale));
+            padding-bottom: 0;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: calc(64px * var(--frame-scale));
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             transform: scale(1.05);
-            /* Sedikit diperbesar agar enak dilihat */
             position: relative;
             overflow: hidden;
+            box-sizing: border-box;
         }
         
         .accessory-rendered {
@@ -108,8 +112,7 @@
 
         .photo-block {
             width: 100%;
-            aspect-ratio: 16/10;
-            /* Sama dengan ratio kamera */
+            height: calc(403px * var(--frame-scale));
             background-color: #f0f0f0;
             border: 1px solid #ddd;
             overflow: hidden;
@@ -118,6 +121,9 @@
             justify-content: center;
             color: #aaa;
             font-size: 14px;
+            position: relative;
+            z-index: 6;
+            box-sizing: border-box;
         }
 
         .photo-block img {
@@ -127,9 +133,8 @@
         }
 
         .photostrip-bottom {
-            height: 70px;
-            /* Space kosong di bawah strip */
-            background-color: white;
+            height: calc(249px * var(--frame-scale));
+            background-color: transparent;
         }
 
         /* Buttons */
@@ -204,7 +209,10 @@
     <div class="container result-container">
 
         <!-- Photostrip Display -->
-        <div class="photostrip-wrapper" id="photostripDOM">
+        <div class="photostrip-wrapper position-relative" id="photostripDOM">
+            <!-- Frame Overlay Image (hidden by default) -->
+            <img id="frameOverlayDOM" src="Frame/About you frame.png" alt="Frame Overlay" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; display: none;">
+
             <!-- Blok ini akan digantikan oleh foto-foto dari sesi kamera -->
             <div class="photo-block" id="pb-0">[Photo 1]</div>
             <div class="photo-block" id="pb-1">[Photo 2]</div>
@@ -242,18 +250,44 @@
             frameConfig = JSON.parse(frameConfigStr);
         }
 
+        // Ambil tipe frame yang terpilih
+        const selectedFrameType = localStorage.getItem('selected_frame_type') || (frameConfigStr ? 'diy' : 'about_you');
+
         const photostripDOM = document.getElementById('photostripDOM');
-        photostripDOM.style.backgroundColor = frameConfig.backgroundColor;
         
-        // Render accessories di DOM preview
-        frameConfig.accessories.forEach(acc => {
-            const el = document.createElement('div');
-            el.className = 'accessory-rendered';
-            el.innerHTML = acc.html;
-            el.style.left = (acc.leftPercent * 100) + '%';
-            el.style.top = (acc.topPercent * 100) + '%';
-            photostripDOM.appendChild(el);
-        });
+        const isTemplate = selectedFrameType.startsWith('template_');
+        // Render preview sesuai tipe frame
+        if (selectedFrameType === 'about_you' || isTemplate) {
+            const frameOverlayDOM = document.getElementById('frameOverlayDOM');
+            if (frameOverlayDOM) {
+                let src = 'Frame/About you frame.png';
+                if (selectedFrameType === 'template_1') src = 'Frame/Frame1.png';
+                else if (selectedFrameType === 'template_2') src = 'Frame/Frame2.png';
+                else if (selectedFrameType === 'template_3') src = 'Frame/Frame3.png';
+                else if (selectedFrameType === 'template_4') src = 'Frame/Frame4.png';
+                else if (selectedFrameType === 'template_5') src = 'Frame/Frame5.png';
+                
+                frameOverlayDOM.src = src;
+                frameOverlayDOM.style.display = 'block';
+            }
+            photostripDOM.style.backgroundColor = '#ffffff';
+        } else if (selectedFrameType === 'diy') {
+            photostripDOM.style.backgroundColor = frameConfig.backgroundColor;
+            
+            // Render accessories di DOM preview
+            frameConfig.accessories.forEach(acc => {
+                const el = document.createElement('div');
+                el.className = 'accessory-rendered';
+                el.innerHTML = acc.html;
+                el.style.left = (acc.leftPercent * 100) + '%';
+                el.style.top = (acc.topPercent * 100) + '%';
+                photostripDOM.appendChild(el);
+            });
+        } else if (selectedFrameType === 'default_2') {
+            photostripDOM.style.backgroundColor = '#BFDDF0';
+        } else if (selectedFrameType === 'default_3') {
+            photostripDOM.style.backgroundColor = '#FFEBCC';
+        }
 
         // Tampilkan ke DOM HTML Preview
         for (let i = 0; i < 3; i++) {
@@ -278,25 +312,29 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
-            // Atur resolusi kanvas final (misal HD vertikal dengan lebar 800px)
+            // Atur resolusi kanvas final (800px x 1686px)
             const frameWidth = 800;
-            const padding = 45; // Jarak/batas putih kiri-kanan
-            const gap = 30; // Jarak spasial antar foto
+            const frameHeight = 1686;
 
-            // Dimensi foto menyesuaikan rasio dari layout (16:10)
-            const photoWidth = frameWidth - (padding * 2);
-            const photoHeight = photoWidth * (10 / 16);
-
-            const bottomSpace = 250; // Ruang ekstra putih di bagian bawah photostrip
-
-            // Total tinggi frame = padding atas + (tinggi foto * jumlah) + (gap * selisih) + ruang bawah
-            const frameHeight = padding + (photoHeight * 3) + (gap * 2) + bottomSpace;
+            const photoWidth = 614;
+            const photoHeight = 403;
+            const leftPadding = 93;
+            const topPadding = 100;
+            const gap = 64;
 
             canvas.width = frameWidth;
             canvas.height = frameHeight;
 
             // 1. Warnai background frame
-            ctx.fillStyle = frameConfig.backgroundColor || '#ffffff';
+            let bgCol = '#ffffff';
+            if (selectedFrameType === 'diy') {
+                bgCol = frameConfig.backgroundColor || '#ffffff';
+            } else if (selectedFrameType === 'default_2') {
+                bgCol = '#BFDDF0';
+            } else if (selectedFrameType === 'default_3') {
+                bgCol = '#FFEBCC';
+            }
+            ctx.fillStyle = bgCol;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Opsional: Beri batas tipis warna abu-abu di sekeliling canvas jika diinginkan
@@ -312,7 +350,7 @@
                         // Gambar pinggiran tipis pada setiap foto (mirip bingkai dalam bingkai)
                         ctx.strokeStyle = '#cccccc';
                         ctx.lineWidth = 1;
-                        ctx.strokeRect(padding - 1, yPos - 1, photoWidth + 2, photoHeight + 2);
+                        ctx.strokeRect(leftPadding - 1, yPos - 1, photoWidth + 2, photoHeight + 2);
 
                         // Hitung dimensi gambar untuk efek object-fit: cover
                         const imgRatio = img.width / img.height;
@@ -335,7 +373,7 @@
                         }
 
                         // Gambar file aslinya (crop dan scale)
-                        ctx.drawImage(img, sx, sy, sWidth, sHeight, padding, yPos, photoWidth, photoHeight);
+                        ctx.drawImage(img, sx, sy, sWidth, sHeight, leftPadding, yPos, photoWidth, photoHeight);
                         resolve();
                     };
                     img.onerror = () => reject(new Error('Gagal memuat gambar'));
@@ -353,49 +391,75 @@
                     btn.innerText = "Memproses...";
                     btn.disabled = true;
 
-                    // Loop & susun masing-masing foto dari elemen pertama ke bawah
+                    // === Tambahkan Overlay Frame jika berupa template atau 'about_you' (di bawah foto) ===
+                    const isTemplate = selectedFrameType.startsWith('template_');
+                    if (selectedFrameType === 'about_you' || isTemplate) {
+                        await new Promise((resolve, reject) => {
+                            const frameImg = new Image();
+                            frameImg.onload = () => {
+                                ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+                                resolve();
+                            };
+                            frameImg.onerror = () => reject(new Error('Gagal memuat frame image'));
+                            
+                            let src = 'Frame/About you frame.png';
+                            if (selectedFrameType === 'template_1') src = 'Frame/Frame1.png';
+                            else if (selectedFrameType === 'template_2') src = 'Frame/Frame2.png';
+                            else if (selectedFrameType === 'template_3') src = 'Frame/Frame3.png';
+                            else if (selectedFrameType === 'template_4') src = 'Frame/Frame4.png';
+                            else if (selectedFrameType === 'template_5') src = 'Frame/Frame5.png';
+                            
+                            frameImg.src = src;
+                        });
+                    }
+
+                    // Loop & susun masing-masing foto di atas frame
                     for (let i = 0; i < photos.length; i++) {
                         if (photos[i]) {
-                            const yPosition = padding + (i * (photoHeight + gap));
+                            const yPosition = topPadding + (i * (photoHeight + gap));
                             await drawImageToCanvas(photos[i], yPosition);
                         }
                     }
 
-                    // === Tambahkan Accessories ke Canvas ===
-                    frameConfig.accessories.forEach(acc => {
-                        if (acc.unicode) {
-                            ctx.fillStyle = acc.color;
-                            const canvasFontSize = 90; 
-                            ctx.font = '900 ' + canvasFontSize + 'px ' + acc.fontFamily;
-                            ctx.textBaseline = 'top';
-                            
-                            const x = acc.leftPercent * canvas.width;
-                            const y = acc.topPercent * canvas.height;
-                            
-                            // Parse string literals (e.g. "\\f564" or "\\F564") to actual character if needed
-                            let drawChar = acc.unicode;
-                            if (drawChar.length > 1 && drawChar.startsWith('\\')) {
-                                let hex = drawChar.replace(/\\u?/i, '');
-                                drawChar = String.fromCharCode(parseInt(hex, 16));
+                    // === Tambahkan Accessories ke Canvas jika tipe 'diy' ===
+                    if (selectedFrameType === 'diy') {
+                        frameConfig.accessories.forEach(acc => {
+                            if (acc.unicode) {
+                                ctx.fillStyle = acc.color;
+                                const canvasFontSize = 90; 
+                                ctx.font = '900 ' + canvasFontSize + 'px ' + acc.fontFamily;
+                                ctx.textBaseline = 'top';
+                                
+                                const x = acc.leftPercent * canvas.width;
+                                const y = acc.topPercent * canvas.height;
+                                
+                                // Parse string literals (e.g. "\\f564" or "\\F564") to actual character if needed
+                                let drawChar = acc.unicode;
+                                if (drawChar.length > 1 && drawChar.startsWith('\\')) {
+                                    let hex = drawChar.replace(/\\u?/i, '');
+                                    drawChar = String.fromCharCode(parseInt(hex, 16));
+                                }
+                                
+                                ctx.fillText(drawChar, x, y);
                             }
-                            
-                            ctx.fillText(drawChar, x, y);
-                        }
-                    });
+                        });
+                    }
 
-                    // === Tambahkan Ornamen Teks MotoBooth ===
-                    // Desain font
-                    ctx.fillStyle = '#1a1a1a';
-                    ctx.font = 'bold 50px Outfit, sans-serif';
-                    ctx.textBaseline = 'alphabetic'; // reset textBaseline
-                    ctx.textAlign = 'center';
-                    ctx.fillText('MotoBooth', frameWidth / 2, frameHeight - 120);
+                    // === Tambahkan Ornamen Teks MotoBooth jika bukan tipe template dan bukan 'about_you' ===
+                    if (selectedFrameType !== 'about_you' && !selectedFrameType.startsWith('template_')) {
+                        // Desain font
+                        ctx.fillStyle = '#1a1a1a';
+                        ctx.font = 'bold 50px Outfit, sans-serif';
+                        ctx.textBaseline = 'alphabetic'; // reset textBaseline
+                        ctx.textAlign = 'center';
+                        ctx.fillText('MotoBooth', frameWidth / 2, frameHeight - 120);
 
-                    // Cetak waktu atau tag (tanggal hari ini)
-                    ctx.font = '30px Outfit, sans-serif';
-                    ctx.fillStyle = '#555555';
-                    const today = new Date().toLocaleDateString('id-ID');
-                    ctx.fillText(today, frameWidth / 2, frameHeight - 60);
+                        // Cetak waktu atau tag (tanggal hari ini)
+                        ctx.font = '30px Outfit, sans-serif';
+                        ctx.fillStyle = '#555555';
+                        const today = new Date().toLocaleDateString('id-ID');
+                        ctx.fillText(today, frameWidth / 2, frameHeight - 60);
+                    }
 
                     // === Memicu/Trigger Proses Unduh ===
                     // Konversi isi grafis dalam kanvas menjadi file .JPG

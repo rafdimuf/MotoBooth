@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MotoBooth - Choose Frame</title>
+    <title>MotoBooth - Choose Template Frame</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="shortcut icon" href="/Assets/Frame 12.png" type="image/x-icon">
+    <link rel="shortcut icon" href="Assets/logoMotoBooth.png" type="image/x-icon">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -24,7 +24,7 @@
             flex-direction: column;
         }
 
-        /* Navbar (Disamakan dengan halaman sebelumnya) */
+        /* Navbar */
         .navbar-custom {
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             border-radius: 12px;
@@ -33,10 +33,8 @@
             padding: 10px 30px;
         }
 
-        .navbar-brand-text {
-            font-weight: 800;
-            color: #42567a !important;
-            font-size: 26px;
+        .navbar-brand img {
+            width: 150px;
         }
 
         .nav-link {
@@ -72,16 +70,14 @@
             color: white;
         }
 
-        /* Frame Options */
+        /* Frame Options Grid */
         .frame-container {
             flex-grow: 1;
-            display: flex;
-            align-items: center;
-            padding: 60px 0;
+            padding: 50px 0;
         }
 
         .frame-card {
-            --frame-scale: 0.26; /* Skala preview di halaman pemilihan frame */
+            --frame-scale: 0.26; /* Skala preview di halaman pemilihan template */
             background: white;
             border: 1px solid #777;
             width: calc(800px * var(--frame-scale));
@@ -157,7 +153,7 @@
             opacity: 0;
             transform: scale(0) rotate(-45deg);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 2;
+            z-index: 15;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
@@ -174,37 +170,19 @@
             margin-bottom: 60px;
         }
 
-        .btn-make-frame {
-            background-color: #fbbc05;
-            /* Warna Kuning Orange */
+        .btn-kembali {
+            background-color: #f8f9fa;
             color: #1a1a1a;
             font-weight: 600;
-            padding: 12px 35px;
+            padding: 12px 45px;
             border-radius: 6px;
-            border: none;
+            border: 1px solid #ccc;
             transition: all 0.2s;
             font-size: 15px;
         }
 
-        .btn-make-frame:hover {
-            background-color: #e3aa04;
-            transform: translateY(-2px);
-        }
-
-        .btn-template-frame {
-            background-color: #42567a;
-            color: white;
-            font-weight: 600;
-            padding: 12px 35px;
-            border-radius: 6px;
-            border: none;
-            transition: all 0.2s;
-            font-size: 15px;
-        }
-
-        .btn-template-frame:hover {
-            background-color: #334461;
-            color: white;
+        .btn-kembali:hover {
+            background-color: #e9ecef;
             transform: translateY(-2px);
         }
 
@@ -213,7 +191,7 @@
             /* Warna Hijau Terang */
             color: white;
             font-weight: 600;
-            padding: 12px 45px;
+            padding: 12px 65px;
             border-radius: 6px;
             border: none;
             transition: all 0.2s;
@@ -233,87 +211,133 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg bg-white navbar-custom">
             <div class="container-fluid">
-                <div class="navbar-brand">
-                    <img src="Assets/logoMotoBooth.png" alt="" style="width: 60%;">
-                </div>
+                <a class="navbar-brand" href="motobooth.html">
+                    <img src="Assets/logoMotoBooth.png" alt="MotoBooth" style="max-height:50px; object-fit: contain;">
+                </a>
                 <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                    aria-label="Toggle navigation">
+                    data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Package</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="payment.html">Package</a></li>
-                        <li class="nav-item"><a class="nav-link" href="login.html">Log In</a></li>
+                        <li class="nav-item">
+                            <a href="#" class="profile-icon">
+                                <i class="fa-solid fa-user"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </div>
 
-    <!-- Main Content: Pilihan Frame -->
+    <!-- Main Content: Template Selection Grid -->
     <div class="container frame-container">
-        <div class="row w-100 justify-content-center align-items-center g-4">
-
-            <!-- Frame 1 -->
-            <div class="col-md-4 d-flex flex-column align-items-center">
-                <div class="frame-card position-relative" onclick="selectFrame(this, 'about_you')">
-                    <!-- Badge centang yang akan muncul saat aktif -->
-                    <div class="check-badge" style="z-index: 15;"><i class="fa-solid fa-check"></i></div>
-
-                    <!-- Frame Overlay Image -->
-                    <img src="Frame/About you frame.png" alt="About You Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+        <!-- Row 1: 4 Templates -->
+        <div class="row w-100 justify-content-center g-4">
+            
+            <!-- Template 1: Perkoro koe -->
+            <div class="col-md-3 d-flex flex-column align-items-center mb-4">
+                <div class="frame-card" onclick="selectFrame(this, 'template_1')">
+                    <div class="check-badge"><i class="fa-solid fa-check"></i></div>
+                    
+                    <!-- Frame Overlay -->
+                    <img src="Frame/Frame1.png" alt="Perkoro koe Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted">About You Frame</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5">Perkoro koe</div>
             </div>
 
-            <!-- Frame 2 -->
-            <div class="col-md-4 d-flex flex-column align-items-center">
-                <div class="frame-card" style="background-color: #BFDDF0;" onclick="selectFrame(this, 'default_2')">
+            <!-- Template 2: Opo ono ne -->
+            <div class="col-md-3 d-flex flex-column align-items-center mb-4">
+                <div class="frame-card" onclick="selectFrame(this, 'template_2')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
+                    
+                    <!-- Frame Overlay -->
+                    <img src="Frame/Frame2.png" alt="Opo ono ne Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
-                    <div class="frame-bottom" style="background-color: #BFDDF0;"></div>
+                    <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted">Classic Blue Frame</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5">Opo ono ne</div>
             </div>
 
-            <!-- Frame 3 -->
-            <div class="col-md-4 d-flex flex-column align-items-center">
-                <div class="frame-card" style="background-color: #FFEBCC;" onclick="selectFrame(this, 'default_3')">
+            <!-- Template 3: Demit -->
+            <div class="col-md-3 d-flex flex-column align-items-center mb-4">
+                <div class="frame-card" onclick="selectFrame(this, 'template_3')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
+                    
+                    <!-- Frame Overlay -->
+                    <img src="Frame/Frame3.png" alt="Demit Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
-                    <div class="frame-bottom" style="background-color: #FFEBCC;"></div>
+                    <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted">Peach Pastel Frame</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5">Demit</div>
+            </div>
+
+            <!-- Template 4: Teu ngarasa -->
+            <div class="col-md-3 d-flex flex-column align-items-center mb-4">
+                <div class="frame-card" onclick="selectFrame(this, 'template_4')">
+                    <div class="check-badge"><i class="fa-solid fa-check"></i></div>
+                    
+                    <!-- Frame Overlay -->
+                    <img src="Frame/Frame4.png" alt="Teu ngarasa Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="frame-bottom"></div>
+                </div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5">Teu ngarasa</div>
+            </div>
+
+        </div>
+
+        <!-- Row 2: 1 Template (Kabeh tentang mu) -->
+        <div class="row w-100 justify-content-center g-4 mt-2">
+            
+            <!-- Template 5: Kabeh tentang mu -->
+            <div class="col-md-3 d-flex flex-column align-items-center">
+                <div class="frame-card" onclick="selectFrame(this, 'template_5')">
+                    <div class="check-badge"><i class="fa-solid fa-check"></i></div>
+                    
+                    <!-- Frame Overlay -->
+                    <img src="Frame/Frame5.png" alt="Kabeh tentang mu Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="photo-block">[Photo]</div>
+                    <div class="frame-bottom"></div>
+                </div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5">Kabeh tentang mu</div>
             </div>
 
         </div>
     </div>
 
-    <!-- Buttons: Lanjut, Make Your Frame, Choose Another Frame -->
+    <!-- Bottom Actions -->
     <div class="container action-buttons">
-        <a href="chooseFrameTemplate.html"><button class="btn-template-frame">Choose Another Frame</button></a>
-        <a href="makeYourFrame.html"><button class="btn-make-frame">Make Your Frame</button></a>
+        <a href="chooseFrame.html" class="text-decoration-none"><button class="btn-kembali">Kembali</button></a>
         <button class="btn-lanjut" id="btnLanjut">Lanjut</button>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script untuk logika pilihan frame -->
+    <!-- Selection Logic Script -->
     <script>
         let chosenFrame = '';
 
@@ -335,10 +359,10 @@
             if (selected && chosenFrame) {
                 // Simpan ke localStorage
                 localStorage.setItem('selected_frame_type', chosenFrame);
-                // Lanjut ke halaman selanjutnya
+                // Lanjut ke halaman selanjutnya (photoPage.html)
                 window.location.href = 'photoPage.html';
             } else {
-                alert('Silakan pilih frame terlebih dahulu!');
+                alert('Silakan pilih salah satu template frame terlebih dahulu!');
             }
         });
     </script>

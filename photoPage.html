@@ -126,6 +126,33 @@
             pointer-events: none;
         }
 
+        .filter-select {
+            background-color: transparent;
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            color: #1a1a1a;
+            cursor: pointer;
+            outline: none;
+            padding-right: 5px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .filter-select-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-select-wrapper::after {
+            content: '\f0d7';
+            font-family: 'FontAwesome';
+            font-size: 12px;
+            pointer-events: none;
+        }
+
         .video-wrapper {
             width: 100%;
             max-width: 800px;
@@ -341,6 +368,15 @@
                     </select>
                 </div>
             </div>
+            <div class="badge-custom">
+                <i class="fa-solid fa-wand-magic-sparkles fs-5"></i>
+                <div class="filter-select-wrapper">
+                    <select id="filterSelect" class="filter-select">
+                        <option value="none">Normal</option>
+                        <option value="grayscale">Hitam Putih</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         <!-- Layar Kamera -->
@@ -397,6 +433,7 @@
         const btnUndo = document.getElementById('btnUndo');
         const btnFinish = document.getElementById('btnFinish');
         const timerSelect = document.getElementById('timerSelect');
+        const filterSelect = document.getElementById('filterSelect');
 
         const countdownOverlay = document.getElementById('countdownOverlay');
         const flashOverlay = document.getElementById('flashOverlay');
@@ -434,13 +471,23 @@
 
         initCamera();
 
+        // Mengubah filter live video
+        filterSelect.addEventListener('change', () => {
+            if (filterSelect.value === 'grayscale') {
+                video.style.filter = 'grayscale(100%)';
+            } else {
+                video.style.filter = 'none';
+            }
+        });
+
         // Event saat tombol Mulai ditekan
         btnCapture.addEventListener('click', () => {
             // Cegah jika sudah maksimal atau sedang hitung mundur
             if (photos.length >= MAX_PHOTOS || isCountingDown || !stream) return;
 
-            // Kunci pemilih timer selama proses berjalan
+            // Kunci pemilih timer & filter selama proses berjalan
             timerSelect.disabled = true;
+            filterSelect.disabled = true;
 
             startAutoCapture();
         });
@@ -449,6 +496,7 @@
         function startAutoCapture() {
             if (photos.length >= MAX_PHOTOS) {
                 timerSelect.disabled = false;
+                filterSelect.disabled = false;
                 return;
             }
 
@@ -484,6 +532,7 @@
                         }, 1500);
                     } else {
                         timerSelect.disabled = false; // Buka kunci pemilih timer
+                        filterSelect.disabled = false; // Buka kunci pemilih filter
                     }
                 }
             }, 1000);
@@ -496,14 +545,47 @@
             void flashOverlay.offsetWidth; // Memicu ulang reflow DOM agar animasi restart
             flashOverlay.classList.add('flash-anim');
 
-            // Atur ukuran canvas sesuai dengan dimensi video stream
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+            // Atur ukuran canvas sesuai dengan dimensi blok putih frame
+            canvas.width = 614;
+            canvas.height = 403;
 
             // Gambar frame dari video ke canvas (Mirror effect)
             ctx.translate(canvas.width, 0);
             ctx.scale(-1, 1);
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Terapkan filter jika filter dipilih hitam putih
+            if (filterSelect.value === 'grayscale') {
+                ctx.filter = 'grayscale(100%)';
+            } else {
+                ctx.filter = 'none';
+            }
+
+            // Hitung dimensi gambar untuk efek object-fit: cover dari video ke canvas
+            const imgWidth = video.videoWidth;
+            const imgHeight = video.videoHeight;
+            const imgRatio = imgWidth / imgHeight;
+            const canvasRatio = canvas.width / canvas.height;
+
+            let sWidth, sHeight, sx, sy;
+
+            if (imgRatio > canvasRatio) {
+                // Video aslinya lebih lebar proporsinya dibanding canvas -> potong kiri-kanan
+                sHeight = imgHeight;
+                sWidth = imgHeight * canvasRatio;
+                sx = (imgWidth - sWidth) / 2;
+                sy = 0;
+            } else {
+                // Video aslinya lebih tinggi proporsinya dibanding canvas -> potong atas-bawah
+                sWidth = imgWidth;
+                sHeight = imgWidth / canvasRatio;
+                sx = 0;
+                sy = (imgHeight - sHeight) / 2;
+            }
+
+            ctx.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+
+            // Reset filter canvas setelah digambar
+            ctx.filter = 'none';
 
             // Ekstrak data gambar
             const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
@@ -522,6 +604,7 @@
             countdownOverlay.style.display = 'none';
             isCountingDown = false;
             timerSelect.disabled = false; // Buka kunci pemilih timer
+            filterSelect.disabled = false; // Buka kunci pemilih filter
 
             // Hapus foto terakhir dari array jika ada
             if (photos.length > 0) {
