@@ -31,11 +31,17 @@
             border-radius: 12px;
             border: 1px solid #e6e6e6;
             margin-top: 15px;
-            padding: 10px 30px;
+            padding: 0 30px !important;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            background-color: white !important;
         }
 
         .navbar-brand img {
             width: 150px;
+            height: 50px;
+            object-fit: contain;
         }
 
         .nav-link {
@@ -48,12 +54,6 @@
 
         .nav-link:hover {
             color: #1a1a1a !important;
-        }
-
-        .profile-icon {
-            font-size: 24px;
-            color: #1a1a1a;
-            margin-left: 20px;
         }
 
         /* Side Panels */
@@ -248,28 +248,19 @@
         <nav class="navbar navbar-expand-lg bg-white navbar-custom">
             <div class="container-fluid">
                 <a class="navbar-brand" href="motobooth.html">
-                    <img src="Assets/logoMotoBooth.png" alt="MotoBooth"
-                        onerror="this.src='https://placehold.co/150x50?text=MotoBooth'"
-                        style="max-height:50px; object-fit: contain;">
+                    <img src="Assets/logoMotoBooth.png" alt="MotoBooth">
                 </a>
                 <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#snavbarNav" aria-controls="navbarNav" aria-expanded="false"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                     aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Package</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link p-0 text-decoration-none">
-                                <div class="profile-container">
-                                    <i class="fa-solid fa-user"></i>
-                                </div>
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="payment.html">Package</a></li>
+                        <li class="nav-item"><a class="nav-link" href="login.html">Log In</a></li>
                     </ul>
                 </div>
             </div>
@@ -483,6 +474,8 @@
             window.location.href = 'photoPage.html';
         }
     </script>
+    <!-- Shared Supabase Auth state synchronizer -->
+    <script src="auth.js"></script>
 </body>
 
 </html>

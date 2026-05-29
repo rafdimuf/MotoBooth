@@ -47,61 +47,60 @@
 
         /* ----- Header & Navbar ----- */
         .header {
-            padding: 20px 40px;
+            padding: 0 20px;
             display: flex;
             justify-content: center;
+            width: 100%;
         }
 
         .navbar {
             width: 100%;
             max-width: 1250px;
+            margin-top: 15px;
             background: #ffffff;
-            border-radius: 50px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            /* Shadow mapping the floating pill look */
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 30px;
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            padding: 0 30px;
+            height: 80px;
+            border: 1px solid #e6e6e6;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            font-size: 22px;
-            font-weight: 800;
-            color: #42567a;
-            /* Color matching the other page */
-            line-height: 1;
-            letter-spacing: -0.5px;
-            margin-left: 10px;
+            margin-left: 0;
+            text-decoration: none;
         }
 
-        .logo span {
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+        .logo img {
+            width: 150px;
+            height: 50px;
+            object-fit: contain;
         }
 
         .nav-links {
             list-style: none;
             display: flex;
-            gap: 45px;
+            gap: 20px;
             margin: 0;
             padding: 0;
             align-items: center;
-            margin-right: 15px;
+            margin-right: 0;
         }
 
         .nav-links li a {
             text-decoration: none;
-            color: #333333;
+            color: #555;
             font-size: 15px;
             font-weight: 500;
-            transition: color 0.2s;
+            transition: color 0.3s;
         }
 
         .nav-links li a:hover {
-            color: #000;
+            color: #1a1a1a;
         }
 
         /* ----- Main Container ----- */
@@ -284,9 +283,6 @@
             transform: translateY(-2px);
         }
 
-        .social-btn.google {
-            /* Handled by SVG image */
-        }
 
         .social-btn.apple {
             color: #000;
@@ -384,16 +380,14 @@
     <!-- Header Navigation -->
     <header class="header">
         <nav class="navbar">
-            <div class="logo">
-                <!-- Using styled text to mimic a logo, since there is no image asset provided -->
-                <span style="font-size: 24px;">MotoBooth</span>
-            </div>
+            <a class="logo" href="motobooth.html">
+                <img src="Assets/logoMotoBooth.png" alt="MotoBooth">
+            </a>
             <ul class="nav-links">
-                <li><a href="#">About</a></li>
                 <li><a href="#">About Us</a></li>
                 <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Package</a></li>
-                <li><a href="#">Log In</a></li>
+                <li><a href="payment.html">Package</a></li>
+                <li><a href="login.html">Log In</a></li>
             </ul>
         </nav>
     </header>
@@ -472,6 +466,42 @@
 
     </main>
 
+    <!-- Supabase JS Library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // --- KONFIGURASI SUPABASE ---
+        // Ganti dengan URL dan Anon Key Supabase Anda yang sebenarnya
+        const SUPABASE_URL = "https://vpghdgbreksgwnvwlzvj.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZ2hkZ2JyZWtzZ3dudndsenZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NjAyMzAsImV4cCI6MjA5MzUzNjIzMH0.YFcb4jIQIVYOIWI-2ezPC4G8VsQtKmECU1zssU5tluo";
+
+        // Inisialisasi Supabase Client
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Hubungkan Tombol Google ke OAuth Supabase
+        const googleBtn = document.querySelector('.social-btn.google');
+        if (googleBtn) {
+            googleBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                try {
+                    // Lakukan sign-in dengan OAuth Google
+                    const { error } = await supabaseClient.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                            // Redirect ke motobooth.html setelah login sukses
+                            redirectTo: window.location.origin + '/motobooth.html'
+                        }
+                    });
+                    if (error) throw error;
+                } catch (err) {
+                    console.error("Gagal melakukan login Google:", err.message);
+                    alert("Login Gagal: " + err.message);
+                }
+            });
+        }
+    </script>
+    <!-- Shared Supabase Auth state synchronizer -->
+    <script src="auth.js"></script>
 </body>
 
 </html>

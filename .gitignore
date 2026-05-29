@@ -1,0 +1,31 @@
+# Dependency Directories
+node_modules/
+auth-app/node_modules/
+
+# Production Builds
+dist/
+auth-app/dist/
+out/
+.next/
+
+# Local Environment Variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+auth-app/.env
+auth-app/.env.local
+auth-app/.env.development.local
+auth-app/.env.test.local
+auth-app/.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# System Files
+.DS_Store
+Thumbs.db

@@ -30,13 +30,17 @@
             border-radius: 12px;
             border: 1px solid #e6e6e6;
             margin-top: 15px;
-            padding: 10px 30px;
+            padding: 0 30px !important;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            background-color: white !important;
         }
 
-        .navbar-brand-text {
-            font-weight: 800;
-            color: #42567a !important;
-            font-size: 26px;
+        .navbar-brand img {
+            width: 150px;
+            height: 50px;
+            object-fit: contain;
         }
 
         .nav-link {
@@ -233,9 +237,9 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg bg-white navbar-custom">
             <div class="container-fluid">
-                <div class="navbar-brand">
-                    <img src="Assets/logoMotoBooth.png" alt="" style="width: 60%;">
-                </div>
+                <a class="navbar-brand" href="motobooth.html">
+                    <img src="Assets/logoMotoBooth.png" alt="MotoBooth">
+                </a>
                 <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -342,6 +346,8 @@
             }
         });
     </script>
+    <!-- Shared Supabase Auth state synchronizer -->
+    <script src="auth.js"></script>
 </body>
 
 </html>
