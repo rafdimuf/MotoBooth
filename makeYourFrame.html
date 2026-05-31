@@ -139,26 +139,33 @@
         }
 
         .canvas-area {
-            width: 320px;
-            height: 450px;
+            width: 280px;
+            height: 590px;
             border: 2px dashed #ddd;
             background-color: #fafafa;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly;
+            padding-top: 35px;
+            padding-left: 32.5px;
+            padding-right: 32.5px;
+            padding-bottom: 87px;
+            gap: 22.4px;
             border-radius: 8px;
             position: relative;
             overflow: hidden;
             transition: background-color 0.3s;
+            box-sizing: border-box;
         }
 
         .photo-slot {
-            width: 80%;
-            height: 25%;
+            width: 215px;
+            height: 141px;
             background-color: #e0e0e0;
             border: 2px solid #ccc;
             border-radius: 4px;
+            box-sizing: border-box;
+            flex-shrink: 0;
         }
 
         .colors-grid {
@@ -186,8 +193,14 @@
             position: absolute;
             cursor: move;
             font-size: 30px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 10;
             user-select: none;
+            box-sizing: border-box;
         }
 
         .dragged-accessory * {
@@ -259,8 +272,8 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="motobooth.html#about">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Dashboard.html">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="payment.html">Package</a></li>
                         <li class="nav-item"><a class="nav-link" href="login.html">Log In</a></li>
                     </ul>
@@ -353,6 +366,13 @@
 
         function drag(ev) {
             ev.dataTransfer.setData("text/plain", ev.currentTarget.id);
+            if (ev.currentTarget.classList.contains("dragged-accessory")) {
+                const rect = ev.currentTarget.getBoundingClientRect();
+                const offsetX = ev.clientX - rect.left;
+                const offsetY = ev.clientY - rect.top;
+                ev.dataTransfer.setData("offsetX", offsetX);
+                ev.dataTransfer.setData("offsetY", offsetY);
+            }
         }
 
         function drop(ev) {
@@ -368,13 +388,24 @@
             const x = ev.clientX - rect.left;
             const y = ev.clientY - rect.top;
 
+            let offsetX = 15; // default center offset (half of 30px width/height)
+            let offsetY = 15;
+
+            const storedOffsetX = ev.dataTransfer.getData("offsetX");
+            const storedOffsetY = ev.dataTransfer.getData("offsetY");
+
+            if (storedOffsetX && storedOffsetY) {
+                offsetX = parseFloat(storedOffsetX);
+                offsetY = parseFloat(storedOffsetY);
+            }
+
             if (sourceEl.classList.contains("accessory-item")) {
                 const newEl = document.createElement('div');
                 newEl.className = 'dragged-accessory';
                 newEl.innerHTML = sourceEl.innerHTML;
 
-                newEl.style.left = (x - 15) + 'px';
-                newEl.style.top = (y - 15) + 'px';
+                newEl.style.left = (x - offsetX) + 'px';
+                newEl.style.top = (y - offsetY) + 'px';
 
                 newEl.draggable = true;
                 newEl.id = 'dropped-acc-' + accessoryCounter++;
@@ -385,8 +416,8 @@
 
                 canvas.appendChild(newEl);
             } else if (sourceEl.classList.contains("dragged-accessory")) {
-                sourceEl.style.left = (x - 15) + 'px';
-                sourceEl.style.top = (y - 15) + 'px';
+                sourceEl.style.left = (x - offsetX) + 'px';
+                sourceEl.style.top = (y - offsetY) + 'px';
             }
         }
 

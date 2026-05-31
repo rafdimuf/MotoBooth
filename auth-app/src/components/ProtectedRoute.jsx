@@ -1,9 +1,20 @@
-import React from 'react'
-import { Navigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import toast from 'react-hot-toast'
 
 export const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth()
+  const location = useLocation()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      // Trigger elegant toast notification once
+      toast.error("Silakan login terlebih dahulu untuk melanjutkan pembayaran", {
+        id: "auth-guard-redirect"
+      })
+    }
+  }, [loading, user])
 
   if (loading) {
     return (
@@ -24,7 +35,8 @@ export const ProtectedRoute = ({ children }) => {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />
+    // Redirect to login while preserving the current route
+    return <Navigate to="/login" state={{ from: location }} replace />
   }
 
   return children

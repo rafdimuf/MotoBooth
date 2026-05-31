@@ -18,6 +18,10 @@
     <link rel="shortcut icon" href="/Assets/Frame 12.png" type="image/x-icon">
 
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
             color: #1a1a1a;
@@ -120,37 +124,92 @@
             line-height: 1.2;
         }
 
-        /* Placeholders */
+        /* Placeholders & Cards */
         .img-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #888;
+            color: #8b96a8;
             font-weight: 500;
             text-align: center;
-            border-radius: 8px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #f8fafc;
+            position: relative;
+        }
+
+        .img-placeholder img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
         .hero-img-placeholder {
             width: 100%;
+            background: transparent;
         }
 
         .about-img-placeholder {
             width: 100%;
             transform: rotate(-3deg);
+            background: transparent;
+            transition: transform 0.4s ease;
+        }
+
+        .about-img-placeholder:hover {
+            transform: rotate(0deg) scale(1.02);
         }
 
         .step-img-placeholder {
             height: 200px;
             width: 100%;
             margin-bottom: 20px;
-            border-radius: 0;
+            border-radius: 16px;
+            padding: 24px;
+            background: linear-gradient(135deg, #fffcf9 0%, #f7f1eb 100%);
+            border: 1px solid rgba(223, 175, 133, 0.25);
+            box-shadow: 0 10px 25px rgba(74, 46, 21, 0.02);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        .footer-logo-placeholder {
-            height: 100px;
-            width: 160px;
-            border-radius: 8px;
+        @media (min-width: 768px) {
+            .step-img-placeholder {
+                height: 240px;
+                padding: 30px;
+            }
+        }
+
+        .step-img-placeholder:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(74, 46, 21, 0.08);
+            border-color: rgba(223, 175, 133, 0.6);
+            background: linear-gradient(135deg, #fffcf9 0%, #f4eade 100%);
+        }
+
+        .step-img-placeholder:hover img {
+            transform: scale(1.05);
+        }
+
+
+
+        /* Footer Logo Container */
+        .footer-logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100%;
+        }
+
+        .footer-logo {
+            max-height: 55px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-logo:hover {
+            transform: scale(1.03);
         }
 
         /* FAQ Accordion */
@@ -238,8 +297,8 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#about">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Dashboard.html">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="payment.html">Package</a></li>
                         <li class="nav-item"><a class="nav-link" href="login.html">Log In</a></li>
                     </ul>
@@ -277,7 +336,7 @@
         </section>
 
         <!-- About Us Section -->
-        <section class="row align-items-center py-5 my-md-4">
+        <section id="about" class="row align-items-center py-5 my-md-4">
             <div class="col-lg-5 mb-5 mb-lg-0">
                 <div class="img-placeholder about-img-placeholder">
                     <img src="/Assets/PhotStrips.png" alt="" class="img-fluid"
@@ -300,19 +359,19 @@
             <div class="row g-5">
                 <div class="col-md-4">
                     <div class="img-placeholder step-img-placeholder">
-                        [Image 1 Placeholder]
+                        <img src="Assets/customizeYourDesign.png" alt="customize your design">
                     </div>
                     <h5 class="fw-bold fs-6 mt-3">Customize Your Design</h5>
                 </div>
                 <div class="col-md-4">
                     <div class="img-placeholder step-img-placeholder">
-                        [Image 2 Placeholder]
+                        <img src="Assets/photoBooth.png" alt="PhotoBooth">
                     </div>
                     <h5 class="fw-bold fs-6 mt-3">PhotoBooth</h5>
                 </div>
                 <div class="col-md-4">
                     <div class="img-placeholder step-img-placeholder">
-                        [Image 3 Placeholder]
+                        <img src="Assets/dashboard.png" alt="Dashboard">
                     </div>
                     <h5 class="fw-bold fs-6 mt-3">Dashboard</h5>
                 </div>
@@ -380,8 +439,8 @@
         <div class="container">
             <div class="row gy-5">
                 <div class="col-lg-3 col-md-6 d-flex align-items-start">
-                    <div class="img-placeholder footer-logo-placeholder">
-                        [Logo Placeholder]
+                    <div class="footer-logo-container">
+                        <img src="Assets/logoMotoBooth.png" alt="MotoBooth Logo" class="footer-logo">
                     </div>
                 </div>
 

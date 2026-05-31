@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MotoBooth</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="Assets/Frame 12.png" type="image/x-icon">
+
+    <style>
+        :root {
+            --brand-peach: #f7cead;
+            --brand-brown: #4a2e15;
+            --brand-slate: #42567a;
+            --bg-light: #fbfbfb;
+            --card-border: rgba(0, 0, 0, 0.05);
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f7f8fa;
+            color: #1a1a1a;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen overlay */
+        #auth-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner-custom {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(247, 206, 173, 0.2);
+            border-top: 4px solid var(--brand-peach);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ----- SIDEBAR STYLING ----- */
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            border-right: 1px solid rgba(0, 0, 0, 0.07);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition-smooth);
+            padding: 30px 24px;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            text-decoration: none;
+        }
+
+        .sidebar-brand img {
+            width: 150px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #fafbfc;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            margin-bottom: 30px;
+            transition: var(--transition-smooth);
+        }
+
+        .sidebar-user img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--brand-peach);
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-user-info {
+            overflow: hidden;
+        }
+
+        .sidebar-user-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1a1a1a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-user-status {
+            font-size: 11px;
+            color: #7d8590;
+            font-weight: 500;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .sidebar-menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            color: #555555;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            border-radius: 12px;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .sidebar-menu-item a i {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+            transition: var(--transition-smooth);
+        }
+
+        /* Active Menu State */
+        .sidebar-menu-item.active a {
+            background-color: var(--brand-peach);
+            color: var(--brand-brown);
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(247, 206, 173, 0.25);
+        }
+
+        .sidebar-menu-item.active a i {
+            color: var(--brand-brown);
+        }
+
+        /* Hover Menu State */
+        .sidebar-menu-item:not(.active) a:hover {
+            background-color: #faf0e6;
+            color: var(--brand-brown);
+        }
+
+        .sidebar-menu-item:not(.active) a:hover i {
+            color: var(--brand-brown);
+        }
+
+        /* Logout button at bottom */
+        .sidebar-logout {
+            margin-top: auto;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 20px;
+        }
+
+        .sidebar-logout a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            color: #df5b5b;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 12px;
+            transition: var(--transition-smooth);
+        }
+
+        .sidebar-logout a:hover {
+            background-color: #fff1f1;
+            color: #d13b3b;
+        }
+
+        /* ----- MAIN CONTENT AREA ----- */
+        .main-wrapper {
+            margin-left: 280px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: var(--transition-smooth);
+            padding: 40px 48px;
+        }
+
+        /* Mobile Header Sticky Bar */
+        .mobile-header {
+            display: none;
+            background: #ffffff;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-header img {
+            height: 38px;
+            object-fit: contain;
+        }
+
+        .menu-toggle-btn {
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            color: #1a1a1a;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Search Header block */
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 30px;
+            padding: 8px 20px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            margin-bottom: 40px;
+            transition: var(--transition-smooth);
+        }
+
+        .search-container:focus-within {
+            border-color: var(--brand-peach);
+            box-shadow: 0 4px 15px rgba(247, 206, 173, 0.2);
+        }
+
+        .search-container i {
+            color: #a0aec0;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .search-container input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 14px;
+            color: #1a1a1a;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        .search-container input::placeholder {
+            color: #a0aec0;
+        }
+
+        /* ----- DASHBOARD PANELS ----- */
+        .dashboard-panel {
+            display: none;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dashboard-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom minimal card */
+        .panel-card {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            max-width: 800px;
+            position: relative;
+        }
+
+        .panel-title {
+            font-weight: 800;
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 35px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Minimal form styling */
+        .form-group-custom {
+            margin-bottom: 25px;
+        }
+
+        .form-group-custom label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #718096;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            font-size: 15px;
+            background-color: #f8fafc;
+            color: #2d3748;
+            outline: none;
+            transition: var(--transition-smooth);
+            font-weight: 500;
+        }
+
+        .form-control-custom:focus {
+            border-color: var(--brand-peach);
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(247, 206, 173, 0.15);
+        }
+
+        .form-control-custom:disabled {
+            background-color: #f1f3f6;
+            color: #718096;
+            cursor: not-allowed;
+            border-color: rgba(0, 0, 0, 0.04);
+        }
+
+        .btn-action-custom {
+            background-color: #6366f1;
+            color: #ffffff;
+            font-weight: 700;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .btn-action-custom:hover {
+            background-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-action-custom:active {
+            transform: translateY(0);
+        }
+
+        .btn-cancel-custom {
+            background-color: transparent;
+            color: #718096;
+            font-weight: 600;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            margin-top: 15px;
+            margin-left: 12px;
+        }
+
+        .btn-cancel-custom:hover {
+            background-color: #fafbfc;
+            color: #1a1a1a;
+        }
+
+        /* Toast notification */
+        .custom-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1a1a1a;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+
+        .custom-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .custom-toast i {
+            color: #4ade80;
+            font-size: 18px;
+        }
+
+        /* ----- EMPTY STATE CONTAINER ----- */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            color: #cbd5e1;
+            margin-bottom: 24px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .empty-state-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .empty-state-desc {
+            font-size: 14px;
+            color: #718096;
+            max-width: 360px;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .btn-cta {
+            background-color: var(--brand-peach);
+            color: var(--brand-brown);
+            font-weight: 700;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 15px;
+            box-shadow: 0 4px 15px rgba(247, 206, 173, 0.3);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            display: inline-block;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(247, 206, 173, 0.45);
+            color: var(--brand-brown);
+        }
+
+        /* ----- FOOTER ----- */
+        .dashboard-footer {
+            margin-top: auto;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 25px;
+            color: #718096;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Overlay blur filter backdrop for mobile active drawer */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            z-index: 95;
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+
+        /* ----- RESPONSIVE LAYOUTS ----- */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: none;
+            }
+
+            /* When drawer is active on mobile */
+            .sidebar.mobile-active {
+                transform: translateX(0);
+                box-shadow: 20px 0 40px rgba(0, 0, 0, 0.08);
+            }
+
+            .sidebar-overlay.mobile-active {
+                display: block;
+                opacity: 1;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+                padding: 30px 24px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Fallback Loader while checking auth state -->
+    <div id="auth-loader">
+        <div class="spinner-custom mb-3"></div>
+        <p class="fw-bold text-secondary" style="font-size: 14px;">Menghubungkan Sesi...</p>
+    </div>
+
+    <!-- Sidebar Navigation Drawer -->
+    <aside class="sidebar" id="sidebar">
+        <a class="sidebar-brand" href="motobooth.html">
+            <img src="Assets/logoMotoBooth.png" alt="MotoBooth">
+        </a>
+
+        <!-- User Profile preview in sidebar -->
+        <div class="sidebar-user">
+            <img id="sidebar-user-avatar" src="https://via.placeholder.com/150" alt="Avatar">
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="sidebar-user-name">Pengguna</div>
+                <div class="sidebar-user-status"><i class="fa-solid fa-circle text-success me-1" style="font-size: 8px;"></i> Aktif</div>
+            </div>
+        </div>
+
+        <!-- Sidebar Navigation Menu -->
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item active" data-target="panel-profile">
+                <a><i class="fa-regular fa-user"></i> Profile</a>
+            </li>
+            <li class="sidebar-menu-item" data-target="panel-fotoku">
+                <a><i class="fa-regular fa-image"></i> Fotoku</a>
+            </li>
+            <li class="sidebar-menu-item" data-target="panel-frameku">
+                <a><i class="fa-regular fa-clone"></i> Frameku</a>
+            </li>
+            <li class="sidebar-menu-item" data-target="panel-pembayaran">
+                <a><i class="fa-regular fa-credit-card"></i> Riwayat Pembayaran</a>
+            </li>
+        </ul>
+
+        <!-- Log out button integrated at the bottom -->
+        <div class="sidebar-logout">
+            <a href="#" id="sidebar-logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+        </div>
+    </aside>
+
+    <!-- Overlay backdrop for mobile slide-in drawer -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Content Panel Wrapper -->
+    <div class="main-wrapper">
+        <!-- Mobile Navigation Sticky Header -->
+        <header class="mobile-header">
+            <a href="motobooth.html">
+                <img src="Assets/logoMotoBooth.png" alt="MotoBooth">
+            </a>
+            <button class="menu-toggle-btn" id="menu-toggle-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </header>
+
+        <!-- Search Bar Header (Desktop & Large screens) -->
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Cari...">
+        </div>
+
+        <!-- PANEL 1: PROFILE SAYA (Default) -->
+        <section class="dashboard-panel active" id="panel-profile">
+            <div class="panel-card">
+                <h2 class="panel-title">Profil Saya</h2>
+                
+                <form id="profile-edit-form">
+                    <div class="form-group-custom">
+                        <label for="profile-name">Nama</label>
+                        <input type="text" class="form-control-custom" id="profile-name" value="-" disabled>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label for="profile-email">Email</label>
+                        <input type="email" class="form-control-custom" id="profile-email" value="-" disabled>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label for="profile-joined">Bergabung sejak</label>
+                        <input type="text" class="form-control-custom" id="profile-joined" value="-" disabled>
+                    </div>
+
+                    <!-- Interactive Profile control buttons -->
+                    <div id="profile-action-container">
+                        <button type="button" class="btn-action-custom" id="btn-edit-profile">Ubah Profile</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- PANEL 2: FOTOKU -->
+        <section class="dashboard-panel" id="panel-fotoku">
+            <div class="panel-card">
+                <h2 class="panel-title">Fotoku</h2>
+                <div class="empty-state">
+                    <i class="fa-regular fa-image empty-state-icon"></i>
+                    <h3 class="empty-state-title">Belum Ada Foto</h3>
+                    <p class="empty-state-desc">Anda belum mengambil foto apapun menggunakan MotoBooth. Mari ambil foto keren pertamamu!</p>
+                    <a href="chooseFrame.html" class="btn-cta">Let's Take a Picture</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL 3: FRAMEKU -->
+        <section class="dashboard-panel" id="panel-frameku">
+            <div class="panel-card">
+                <h2 class="panel-title">Frameku</h2>
+                <div class="empty-state">
+                    <i class="fa-regular fa-clone empty-state-icon"></i>
+                    <h3 class="empty-state-title">Belum Ada Frame</h3>
+                    <p class="empty-state-desc">Ingin foto dengan bingkai kreasimu sendiri? Buat frame yang unik dan jadikan fotomu lebih kreatif!</p>
+                    <a href="makeYourFrame.html" class="btn-cta">Buat Frame</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL 4: RIWAYAT PEMBAYARAN -->
+        <section class="dashboard-panel" id="panel-pembayaran">
+            <div class="panel-card">
+                <h2 class="panel-title">Riwayat Pembayaran</h2>
+                <div class="empty-state">
+                    <i class="fa-regular fa-credit-card empty-state-icon"></i>
+                    <h3 class="empty-state-title">Belum Ada Pembayaran</h3>
+                    <p class="empty-state-desc">Semua transaksi pembayaran paket photobooth digital Anda akan tercatat secara rapi di sini.</p>
+                    <a href="payment.html" class="btn-cta">Beli Paket Premium</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modern elegant footer bottom inside panels -->
+        <footer class="dashboard-footer">
+            <span>&copy; 2026 MotoBooth. Hak Cipta Dilindungi Undang-Undang.</span>
+            <span>Yogyakarta, Indonesia.</span>
+        </footer>
+    </div>
+
+    <!-- Custom Toast Notification -->
+    <div class="custom-toast" id="custom-toast">
+        <i class="fa-regular fa-circle-check"></i>
+        <span id="toast-message">Profil berhasil diperbarui!</span>
+    </div>
+
+    <!-- Supabase JS Client & Auth Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = "https://vpghdgbreksgwnvwlzvj.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZ2hkZ2JyZWtzZ3dudndsenZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NjAyMzAsImV4cCI6MjA5MzUzNjIzMH0.YFcb4jIQIVYOIWI-2ezPC4G8VsQtKmECU1zssU5tluo";
+        
+        // Inisialisasi Supabase Client
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+
+        // Immediate session check to prevent unauthorized flash
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            if (!session) {
+                // Not authenticated, redirect straight to login
+                window.location.replace('login.html');
+            } else {
+                // Authenticated, initialize dashboard elements
+                currentUser = session.user;
+                initDashboard(session.user);
+            }
+        });
+
+        // Initialize dashboard dynamic content
+        function initDashboard(user) {
+            // Hide Loader
+            const loader = document.getElementById('auth-loader');
+            if (loader) {
+                loader.style.transition = 'opacity 0.4s ease';
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 400);
+            }
+
+            const userMetadata = user.user_metadata || {};
+            const avatarUrl = userMetadata.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80';
+            const name = userMetadata.full_name || user.email.split('@')[0];
+            const email = user.email;
+            
+            // Format Join Date (from created_at e.g. "2026-05-30T...")
+            const joinDate = new Date(user.created_at);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedJoinDate = joinDate.toLocaleDateString('id-ID', options);
+
+            // Populate Sidebar Profile UI
+            document.getElementById('sidebar-user-avatar').src = avatarUrl;
+            document.getElementById('sidebar-user-name').innerText = name;
+
+            // Populate Profile Form Panel
+            document.getElementById('profile-name').value = name;
+            document.getElementById('profile-email').value = email;
+            document.getElementById('profile-joined').value = formattedJoinDate;
+        }
+
+        // ----- SIDEMENU TABBING INTERACTION -----
+        const menuItems = document.querySelectorAll('.sidebar-menu-item');
+        const panels = document.querySelectorAll('.dashboard-panel');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Switch Active states in Sidebar Menu
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+
+                // Switch Active Panels dynamically
+                const target = this.getAttribute('data-target');
+                panels.forEach(panel => {
+                    panel.classList.remove('active');
+                    if (panel.id === target) {
+                        panel.classList.add('active');
+                    }
+                });
+
+                // Auto-close sidebar drawer on mobile after tapping
+                closeMobileSidebar();
+            });
+        });
+
+        // ----- MOBILE SIDEBAR DRAWER TOGGLE -----
+        const menuToggleBtn = document.getElementById('menu-toggle-btn');
+        
+        function openMobileSidebar() {
+            sidebar.classList.add('mobile-active');
+            sidebarOverlay.classList.add('mobile-active');
+        }
+
+        function closeMobileSidebar() {
+            sidebar.classList.remove('mobile-active');
+            sidebarOverlay.classList.remove('mobile-active');
+        }
+
+        if (menuToggleBtn) {
+            menuToggleBtn.addEventListener('click', openMobileSidebar);
+        }
+        sidebarOverlay.addEventListener('click', closeMobileSidebar);
+
+        // ----- DYNAMIC PROFILE EDITING -----
+        const btnEditProfile = document.getElementById('btn-edit-profile');
+        const profileNameInput = document.getElementById('profile-name');
+        const actionContainer = document.getElementById('profile-action-container');
+
+        if (btnEditProfile) {
+            btnEditProfile.addEventListener('click', function() {
+                // Enable Input Name for editing
+                profileNameInput.disabled = false;
+                profileNameInput.focus();
+
+                // Swap buttons
+                actionContainer.innerHTML = `
+                    <button type="submit" class="btn-action-custom" id="btn-save-profile">Simpan Perubahan</button>
+                    <button type="button" class="btn-cancel-custom" id="btn-cancel-profile">Batal</button>
+                `;
+
+                // Handle Cancel Editing
+                document.getElementById('btn-cancel-profile').addEventListener('click', function() {
+                    resetProfileForm();
+                });
+            });
+        }
+
+        // Handle Profile Saving Form Submit
+        document.getElementById('profile-edit-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const newName = profileNameInput.value.trim();
+
+            if (!newName) {
+                alert("Nama tidak boleh kosong!");
+                return;
+            }
+
+            try {
+                // Update full_name inside user_metadata using Supabase auth
+                const { data, error } = await supabaseClient.auth.updateUser({
+                    data: { full_name: newName }
+                });
+
+                if (error) throw error;
+
+                // Sync current state
+                currentUser = data.user;
+                document.getElementById('sidebar-user-name').innerText = newName;
+                
+                // Show gorgeous toast notification
+                showToast("Profil berhasil diperbarui!");
+                resetProfileForm();
+            } catch (err) {
+                alert("Gagal memperbarui profil: " + err.message);
+            }
+        });
+
+        function resetProfileForm() {
+            // Restore default view state
+            profileNameInput.disabled = true;
+            
+            const originalName = currentUser?.user_metadata?.full_name || currentUser?.email.split('@')[0];
+            profileNameInput.value = originalName;
+
+            actionContainer.innerHTML = `
+                <button type="button" class="btn-action-custom" id="btn-edit-profile">Ubah Profile</button>
+            `;
+
+            // Re-bind the click event to newly created edit button
+            document.getElementById('btn-edit-profile').addEventListener('click', function() {
+                profileNameInput.disabled = false;
+                profileNameInput.focus();
+
+                actionContainer.innerHTML = `
+                    <button type="submit" class="btn-action-custom" id="btn-save-profile">Simpan Perubahan</button>
+                    <button type="button" class="btn-cancel-custom" id="btn-cancel-profile">Batal</button>
+                `;
+
+                document.getElementById('btn-cancel-profile').addEventListener('click', resetProfileForm);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('custom-toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ----- SIGN OUT HANDLER -----
+        const logoutBtn = document.getElementById('sidebar-logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                if (confirm("Apakah Anda ingin logout dari MotoBooth?")) {
+                    try {
+                        await supabaseClient.auth.signOut();
+                        window.location.replace("motobooth.html");
+                    } catch (err) {
+                        alert("Gagal logout: " + err.message);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -61,21 +61,9 @@
                         `;
                     }
                     
-                    link.href = "#"; // Mencegah pergi ke halaman login
-                    link.title = "Klik untuk Logout";
-                    
-                    // Aksi Logout saat klik profil
-                    link.onclick = async (e) => {
-                        e.preventDefault();
-                        if (confirm("Apakah Anda ingin logout dari MotoBooth?")) {
-                            try {
-                                await supabaseClient.auth.signOut();
-                                window.location.href = "motobooth.html"; // Kembali ke Beranda setelah logout
-                            } catch (err) {
-                                alert("Gagal logout: " + err.message);
-                            }
-                        }
-                    };
+                    link.href = "Dashboard.html"; // Mencegah pergi ke halaman login
+                    link.title = "Ke Dashboard Saya";
+                    link.onclick = null;
                 } else {
                     // Jika belum login, kembalikan ke tombol "Log In" standar
                     link.innerHTML = 'Log In';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { AlertCircle, ArrowRight } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -8,13 +8,16 @@ export const Login = () => {
   const { user, loginWithGoogle } = useAuth()
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
-    // If user session already exists, auto redirect to dashboard
+    // If user session already exists, auto redirect to intended route or dashboard
     if (user) {
-      navigate('/dashboard', { replace: true })
+      const from = location.state?.from?.pathname || '/dashboard'
+      const search = location.state?.from?.search || ''
+      navigate(from + search, { replace: true })
     }
-  }, [user, navigate])
+  }, [user, navigate, location])
 
   const handleGoogleLogin = async () => {
     try {

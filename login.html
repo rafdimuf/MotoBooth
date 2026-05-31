@@ -25,7 +25,7 @@
             --text-muted: #666666;
             --bg-color: #ffffff;
             --input-border: #cccccc;
-            --visual-bg: #f5f4ef;
+
             /* Light beige matching the image */
             --link-blue: #6385cd;
             /* Blueish color for 'Login' and 'OR' */
@@ -329,27 +329,35 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 10px;
         }
 
-        .placeholder-box {
-            border: 2px dashed #d1ceca;
-            border-radius: 10px;
-            padding: 30px 40px;
-            color: #a09d97;
-            font-size: 16px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.4);
+        .collage-image {
+            max-width: 100%;
+            max-height: 550px;
+            height: auto;
+            object-fit: contain;
+            border-radius: 16px;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: floatIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .visual-footer-text {
-            text-align: center;
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            line-height: 1.8;
-            color: #000;
-            margin-top: 30px;
+        .collage-image:hover {
+            transform: scale(1.02);
         }
+
+        @keyframes floatIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.97);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
 
         /* Responsive Breakpoints */
         @media (max-width: 900px) {
@@ -371,7 +379,12 @@
             }
 
             .visual-section {
-                min-height: 400px;
+                min-height: auto;
+                padding: 30px 20px;
+            }
+
+            .collage-image {
+                max-height: 420px;
             }
         }
     </style>
@@ -386,8 +399,8 @@
                 <img src="Assets/logoMotoBooth.png" alt="MotoBooth">
             </a>
             <ul class="nav-links">
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Dashboard</a></li>
+                <li><a href="motobooth.html#about">About Us</a></li>
+                <li><a href="Dashboard.html">Dashboard</a></li>
                 <li><a href="payment.html">Package</a></li>
                 <li><a href="login.html">Log In</a></li>
             </ul>
@@ -449,21 +462,12 @@
 
         <!-- Right Side: Visual/Image Placeholder -->
         <section class="visual-section">
-            <!-- Illustration Area Placeholder based on user request ('tampilannya', without 'ilustrasinya') -->
+            <!-- Collage Illustration Area with image -->
             <div class="illustration-placeholder">
-                <div class="placeholder-box">
-                    <i class="fa-regular fa-image"
-                        style="font-size: 32px; margin-bottom: 15px; color: #b5b5b5;"></i><br>
-                    [Collage Illustration Area]
-                </div>
+                <img src="Assets/photoStripLogin.png" alt="MotoBooth Photo Strip Collage" class="collage-image">
             </div>
 
-            <!-- Bottom Text from the image -->
-            <div class="visual-footer-text">
-                <div>ESTILISMO DE MODA</div>
-                <div>F.D. SCHOOL</div>
-                <div>CURSO 2022-23</div>
-            </div>
+
         </section>
 
     </main>
@@ -472,12 +476,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // --- KONFIGURASI SUPABASE ---
-        // Ganti dengan URL dan Anon Key Supabase Anda yang sebenarnya
         const SUPABASE_URL = "https://vpghdgbreksgwnvwlzvj.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZ2hkZ2JyZWtzZ3dudndsenZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NjAyMzAsImV4cCI6MjA5MzUzNjIzMH0.YFcb4jIQIVYOIWI-2ezPC4G8VsQtKmECU1zssU5tluo";
 
         // Inisialisasi Supabase Client
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Dynamic target path for robust redirection in both local and hosted environments
+        const dashboardUrl = window.location.href.split('/').slice(0, -1).join('/') + '/Dashboard.html';
+
+        // Auto-forward to Dashboard if session already exists
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                window.location.replace('Dashboard.html');
+            }
+        });
 
         // Hubungkan Tombol Google ke OAuth Supabase
         const googleBtn = document.querySelector('.social-btn.google');
@@ -490,13 +503,42 @@
                     const { error } = await supabaseClient.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
-                            // Redirect ke motobooth.html setelah login sukses
-                            redirectTo: window.location.origin + '/motobooth.html'
+                            // Redirect ke Dashboard.html setelah login sukses
+                            redirectTo: dashboardUrl
                         }
                     });
                     if (error) throw error;
                 } catch (err) {
                     console.error("Gagal melakukan login Google:", err.message);
+                    alert("Login Gagal: " + err.message);
+                }
+            });
+        }
+
+        // Hubungkan Tombol Login Form untuk Autentikasi Email & Password
+        const loginBtn = document.querySelector('.login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const emailInput = document.getElementById('email').value.trim();
+                const passwordInput = document.getElementById('password').value;
+
+                if (!emailInput || !passwordInput) {
+                    alert("Silakan masukkan email dan password!");
+                    return;
+                }
+
+                try {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
+                        email: emailInput,
+                        password: passwordInput
+                    });
+                    if (error) throw error;
+
+                    // Redirect setelah login sukses
+                    window.location.replace('Dashboard.html');
+                } catch (err) {
+                    console.error("Gagal login email:", err.message);
                     alert("Login Gagal: " + err.message);
                 }
             });

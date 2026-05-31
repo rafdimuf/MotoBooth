@@ -195,8 +195,10 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="motobooth.html#about">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Dashboard.html">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="payment.html">Package</a></li>
+                        <li class="nav-item"><a class="nav-link" href="login.html">Log In</a></li>
                     </ul>
                 </div>
             </div>
@@ -256,32 +258,9 @@
                 <div class="order-summary" id="orderSummary">
                     <h5 class="summary-title">Order Summary</h5>
                     <div id="summaryContent" class="text-secondary" style="font-size: 15px;">
-                        <p class="mb-0">Silakan pilih paket langganan dan metode pembayaran terlebih dahulu untuk
-                            melihat ringkasan order.</p>
+                        <p class="mb-0">Silakan pilih paket langganan terlebih dahulu untuk melihat ringkasan order.</p>
                     </div>
                 </div>
-
-                <h6 class="fw-bold mb-3 mt-4 fs-6">Pembayaran</h6>
-
-                <!-- Payment Methods -->
-                <!-- We add fee variables, assuming QRIS has 1000 fee and BCA has 2500 fee as example -->
-                <label class="selection-card payment-card" data-method="QRIS" data-fee="1000" style="cursor: pointer;">
-                    <div class="d-flex align-items-center w-100">
-                        <input class="form-check-input mt-0 me-3 payment-radio" type="radio" name="payment_method"
-                            value="QRIS" style="cursor: pointer; width: 1.2em; height: 1.2em;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" alt="QRIS"
-                            class="payment-logo">
-                    </div>
-                </label>
-
-                <label class="selection-card payment-card" data-method="BCA" data-fee="2500" style="cursor: pointer;">
-                    <div class="d-flex align-items-center w-100">
-                        <input class="form-check-input mt-0 me-3 payment-radio" type="radio" name="payment_method"
-                            value="BCA" style="cursor: pointer; width: 1.2em; height: 1.2em;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" alt="BCA"
-                            class="payment-logo" style="height: 25px;">
-                    </div>
-                </label>
             </div>
         </div>
 
@@ -297,12 +276,9 @@
         // State variables
         let selectedPackage = null;
         let selectedPrice = 0;
-        let selectedMethod = null;
-        let adminFee = 0;
 
         // Elements
         const packageCards = document.querySelectorAll('.package-card');
-        const paymentCards = document.querySelectorAll('.payment-card');
         const summaryContent = document.getElementById('summaryContent');
         const btnBayar = document.getElementById('btnBayar');
 
@@ -317,8 +293,8 @@
 
         // Update Summary dynamically
         const updateSummary = () => {
-            if (!selectedPackage || !selectedMethod) {
-                summaryContent.innerHTML = '<p class="mb-0">Silakan pilih paket langganan dan metode pembayaran terlebih dahulu untuk melihat ringkasan order.</p>';
+            if (!selectedPackage) {
+                summaryContent.innerHTML = '<p class="mb-0">Silakan pilih paket langganan terlebih dahulu untuk melihat ringkasan order.</p>';
                 btnBayar.disabled = true;
                 return;
             }
@@ -328,14 +304,10 @@
                     <span class="text-secondary">Paket Premium (${selectedPackage} Hari)</span>
                     <span class="fw-medium text-dark">${formatRupiah(selectedPrice)}</span>
                 </div>
-                <div class="d-flex justify-content-between mb-3">
-                    <span class="text-secondary">Biaya Admin (${selectedMethod})</span>
-                    <span class="fw-medium text-dark">${formatRupiah(adminFee)}</span>
-                </div>
                 <hr class="my-4" style="border-color: #bcbcbc;">
                 <div class="d-flex justify-content-between align-items-center">
                     <span class="fw-bold text-dark fs-6">Total Pembayaran</span>
-                    <span class="fw-bold text-dark fs-5">${formatRupiah(selectedPrice + adminFee)}</span>
+                    <span class="fw-bold text-dark fs-5">${formatRupiah(selectedPrice)}</span>
                 </div>
             `;
 
@@ -359,28 +331,57 @@
             });
         });
 
-        // Event Listeners for Payment Cards
-        paymentCards.forEach(card => {
-            card.addEventListener('click', () => {
-                // Remove active class from all
-                paymentCards.forEach(c => c.classList.remove('active'));
-                // Add to clicked
-                card.classList.add('active');
-
-                // Update state
-                selectedMethod = card.getAttribute('data-method');
-                adminFee = parseInt(card.getAttribute('data-fee'));
-
-                updateSummary();
-            });
-        });
-
         // Bayar Action
         btnBayar.addEventListener('click', () => {
-            alert(\`Memproses pembayaran melalui \${selectedMethod} dengan total \${formatRupiah(selectedPrice + adminFee)}\`);
-            // Add redirection logic here, e.g. window.location.href = 'success.html';
+            if (!selectedPackage) {
+                alert("Silakan pilih paket langganan terlebih dahulu.");
+                return;
+            }
+
+            // Disable button during processing
+            btnBayar.disabled = true;
+            btnBayar.innerText = "Memproses...";
+
+            // Send order creation request to PHP backend
+            fetch('php/placeOrder.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    package: selectedPackage
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Gagal memproses pesanan di server (Status: ${response.status} ${response.statusText}).`);
+                }
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("Server tidak mengembalikan respons JSON. Jika Anda menjalankan berkas ini menggunakan VS Code 'Live Server' (port 5500), berkas PHP placeOrder.php TIDAK BISA dieksekusi. Silakan jalankan menggunakan Local PHP Development Server (misal dengan perintah `php -S localhost:8000` di terminal) atau menggunakan Apache/XAMPP/Laragon.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success' && data.snap_token) {
+                    // Redirect to midtransPayment.html with the snap token
+                    window.location.href = `midtransPayment.html?token=${data.snap_token}`;
+                } else {
+                    alert("Error: " + (data.message || "Gagal mendapatkan token pembayaran."));
+                    btnBayar.disabled = false;
+                    btnBayar.innerText = "Bayar";
+                }
+            })
+            .catch(error => {
+                console.error("Midtrans Error:", error);
+                alert("Terjadi kesalahan:\n\n" + error.message);
+                btnBayar.disabled = false;
+                btnBayar.innerText = "Bayar";
+            });
         });
     </script>
+    <!-- Shared Supabase Auth state synchronizer -->
+    <script src="auth.js"></script>
     <!-- Mobile Menu Drawer Support -->
     <script src="mobile-menu.js"></script>
 </body>
