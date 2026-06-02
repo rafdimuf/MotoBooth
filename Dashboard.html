@@ -552,6 +552,59 @@
                 display: flex;
             }
         }
+
+        /* Ultra Premium SaaS Payment History Table */
+        .transaction-row {
+            background-color: #fafbfc;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            border-radius: 12px;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+        .transaction-row:hover {
+            transform: translateY(-1px);
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+        .transaction-row td {
+            padding: 16px 15px;
+            border-top: 1px solid rgba(0, 0, 0, 0.02);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+        }
+        .transaction-row td:first-child {
+            border-left: 1px solid rgba(0, 0, 0, 0.02);
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            font-weight: 600;
+            color: var(--brand-slate);
+        }
+        .transaction-row td:last-child {
+            border-right: 1px solid rgba(0, 0, 0, 0.02);
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .status-badge.success {
+            background-color: rgba(60, 165, 92, 0.08);
+            color: #3ca55c;
+            border: 1px solid rgba(60, 165, 92, 0.15);
+        }
+        .status-badge.pending {
+            background-color: rgba(245, 158, 11, 0.08);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.15);
+        }
+        .status-badge.error {
+            background-color: rgba(239, 68, 68, 0.08);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.15);
+        }
     </style>
 </head>
 
@@ -678,13 +731,34 @@
 
         <!-- PANEL 4: RIWAYAT PEMBAYARAN -->
         <section class="dashboard-panel" id="panel-pembayaran">
-            <div class="panel-card">
+            <div class="panel-card" style="max-width: 900px;">
                 <h2 class="panel-title">Riwayat Pembayaran</h2>
-                <div class="empty-state">
+                
+                <!-- Empty State -->
+                <div class="empty-state" id="pembayaran-empty-state">
                     <i class="fa-regular fa-credit-card empty-state-icon"></i>
                     <h3 class="empty-state-title">Belum Ada Pembayaran</h3>
                     <p class="empty-state-desc">Semua transaksi pembayaran paket photobooth digital Anda akan tercatat secara rapi di sini.</p>
                     <a href="payment.html" class="btn-cta">Beli Paket Premium</a>
+                </div>
+
+                <!-- Transaction Table Container -->
+                <div class="table-responsive" id="pembayaran-table-container" style="display: none;">
+                    <table class="table table-borderless align-middle" style="font-size: 14px; border-collapse: separate; border-spacing: 0 10px;">
+                        <thead>
+                            <tr class="text-secondary" style="font-weight: 600;">
+                                <th class="ps-3 pb-2">Order ID</th>
+                                <th class="pb-2">Paket</th>
+                                <th class="pb-2">Metode</th>
+                                <th class="pb-2">Tanggal</th>
+                                <th class="pb-2 text-end pe-3">Total</th>
+                                <th class="pb-2 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pembayaran-tbody">
+                            <!-- Dynamic rows loaded via JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
@@ -753,6 +827,9 @@
             document.getElementById('profile-name').value = name;
             document.getElementById('profile-email').value = email;
             document.getElementById('profile-joined').value = formattedJoinDate;
+
+            // Load and Render Payment History
+            loadPaymentHistory(user.id);
         }
 
         // ----- SIDEMENU TABBING INTERACTION -----
@@ -900,6 +977,88 @@
                         alert("Gagal logout: " + err.message);
                     }
                 }
+            });
+        }
+        // ----- LOAD & RENDER PAYMENT HISTORY -----
+        function loadPaymentHistory(userId) {
+            const storageKey = `payments_${userId}`;
+            const payments = JSON.parse(localStorage.getItem(storageKey)) || [];
+            
+            const emptyState = document.getElementById('pembayaran-empty-state');
+            const tableContainer = document.getElementById('pembayaran-table-container');
+            const tbody = document.getElementById('pembayaran-tbody');
+
+            if (!payments || payments.length === 0) {
+                emptyState.style.display = 'flex';
+                tableContainer.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tableContainer.style.display = 'block';
+            tbody.innerHTML = '';
+
+            const formatRupiah = (number) => {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                }).format(number);
+            };
+
+            payments.forEach(payment => {
+                // Determine package name based on gross_amount
+                let packageName = 'MotoBooth Premium';
+                if (payment.gross_amount === 8000) {
+                    packageName = 'Premium 5 Hari';
+                } else if (payment.gross_amount === 30000) {
+                    packageName = 'Premium 30 Hari';
+                } else if (payment.gross_amount === 38000) {
+                    packageName = 'Combo 5 & 30 Hari';
+                }
+
+                // Format Date nicely
+                const dateObj = new Date(payment.date);
+                const formattedDate = dateObj.toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                }) + ', ' + dateObj.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Style transaction status badge
+                let statusText = 'Gagal';
+                let statusClass = 'error';
+                if (payment.status === 'success') {
+                    statusText = 'Lunas';
+                    statusClass = 'success';
+                } else if (payment.status === 'pending') {
+                    statusText = 'Menunggu';
+                    statusClass = 'pending';
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = 'transaction-row';
+                tr.innerHTML = `
+                    <td class="text-monospace">${payment.order_id}</td>
+                    <td>
+                        <div class="fw-bold text-dark">${packageName}</div>
+                        <div class="text-secondary small">MotoBooth Subscription</div>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border p-2" style="font-size: 11px;">
+                            <i class="fa-solid fa-wallet me-1 text-secondary"></i> ${payment.payment_type || 'MIDTRANS'}
+                        </span>
+                    </td>
+                    <td class="text-secondary" style="font-size: 13px;">${formattedDate}</td>
+                    <td class="text-end pe-3 fw-bold text-dark" style="font-size: 15px;">${formatRupiah(payment.gross_amount)}</td>
+                    <td class="text-center">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
         }
     </script>

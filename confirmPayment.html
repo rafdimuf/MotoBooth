@@ -357,6 +357,53 @@
             // Format payment type nicely
             const paymentType = rawPaymentType.replace(/_/g, ' ').toUpperCase();
 
+            // Save transaction to localStorage for Dashboard history
+            const saveTransaction = async () => {
+                if (!status || orderId === 'MB-UNKNOWN') return;
+                
+                const SUPABASE_URL = "https://vpghdgbreksgwnvwlzvj.supabase.co"; 
+                const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZ2hkZ2JyZWtzZ3dudndsenZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NjAyMzAsImV4cCI6MjA5MzUzNjIzMH0.YFcb4jIQIVYOIWI-2ezPC4G8VsQtKmECU1zssU5tluo";
+                
+                let supabaseClient;
+                if (window.supabase) {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                } else {
+                    return;
+                }
+
+                try {
+                    const { data: { session } } = await supabaseClient.auth.getSession();
+                    if (session && session.user) {
+                        const userId = session.user.id;
+                        const storageKey = `payments_${userId}`;
+                        
+                        let payments = JSON.parse(localStorage.getItem(storageKey)) || [];
+                        
+                        // Check if transaction already exists to avoid duplicates on refresh
+                        const exists = payments.some(p => p.order_id === orderId);
+                        if (!exists) {
+                            payments.unshift({
+                                order_id: orderId,
+                                gross_amount: grossAmount,
+                                payment_type: paymentType,
+                                status: status,
+                                date: new Date().toISOString()
+                            });
+                            localStorage.setItem(storageKey, JSON.stringify(payments));
+                            console.log('[Dashboard History] Saved payment:', orderId);
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error saving transaction to history:', e);
+                }
+            };
+            
+            if (window.supabase) {
+                saveTransaction();
+            } else {
+                setTimeout(saveTransaction, 1000);
+            }
+
             const container = document.getElementById('statusContainer');
 
             // Render view based on payment status
@@ -486,6 +533,8 @@
             }
         });
     </script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Shared Supabase Auth state synchronizer -->
     <script src="auth.js"></script>
     <!-- Mobile Menu Drawer Support -->
