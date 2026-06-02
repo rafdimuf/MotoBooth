@@ -378,8 +378,9 @@
                         const storageKey = `payments_${userId}`;
                         
                         let payments = JSON.parse(localStorage.getItem(storageKey)) || [];
+                        let hasChanges = false;
                         
-                        // Check if transaction already exists to avoid duplicates on refresh
+                        // Check if transaction already exists locally to avoid duplicates on refresh
                         const exists = payments.some(p => p.order_id === orderId);
                         if (!exists) {
                             payments.unshift({
@@ -390,7 +391,48 @@
                                 date: new Date().toISOString()
                             });
                             localStorage.setItem(storageKey, JSON.stringify(payments));
-                            console.log('[Dashboard History] Saved payment:', orderId);
+                            hasChanges = true;
+                            console.log('[Dashboard History] Saved payment locally:', orderId);
+                        }
+
+                        // Pull remote payments from Supabase user_metadata to merge
+                        const userMetadata = session.user.user_metadata || {};
+                        let remotePayments = userMetadata.payments || [];
+                        let remoteModified = false;
+
+                        // Merge remote payments into our local list
+                        remotePayments.forEach(rp => {
+                            if (!payments.some(lp => lp.order_id === rp.order_id)) {
+                                payments.push(rp);
+                                hasChanges = true;
+                            }
+                        });
+
+                        // Ensure remote has the new payment too
+                        if (!remotePayments.some(rp => rp.order_id === orderId)) {
+                            remotePayments.unshift({
+                                order_id: orderId,
+                                gross_amount: grossAmount,
+                                payment_type: paymentType,
+                                status: status,
+                                date: new Date().toISOString()
+                            });
+                            remoteModified = true;
+                        }
+
+                        // If local list changed, sort and save
+                        if (hasChanges) {
+                            payments.sort((a, b) => new Date(b.date) - new Date(a.date));
+                            localStorage.setItem(storageKey, JSON.stringify(payments));
+                        }
+
+                        // If remote list changed, sort and save back to Supabase metadata
+                        if (remoteModified || hasChanges) {
+                            remotePayments.sort((a, b) => new Date(b.date) - new Date(a.date));
+                            await supabaseClient.auth.updateUser({
+                                data: { payments: remotePayments }
+                            });
+                            console.log('[Supabase Sync] Successfully synchronized payment to user_metadata cloud');
                         }
                     }
                 } catch (e) {

@@ -1074,6 +1074,46 @@
             const storageKey = `payments_${userId}`;
             let payments = JSON.parse(localStorage.getItem(storageKey)) || [];
             
+            // Sync with Supabase user_metadata to solve cross-device discrepancy
+            let hasSyncChanges = false;
+            try {
+                const userMetadata = currentUser?.user_metadata || {};
+                let remotePayments = userMetadata.payments || [];
+                
+                // Merge remote payments into local
+                remotePayments.forEach(rp => {
+                    if (!payments.some(lp => lp.order_id === rp.order_id)) {
+                        payments.push(rp);
+                        hasSyncChanges = true;
+                    }
+                });
+
+                // Merge local payments back into remote payments in user_metadata if remote doesn't have it
+                let remoteModified = false;
+                payments.forEach(lp => {
+                    if (!remotePayments.some(rp => rp.order_id === lp.order_id)) {
+                        remotePayments.push(lp);
+                        remoteModified = true;
+                    }
+                });
+
+                if (remoteModified) {
+                    remotePayments.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    const { data, error } = await supabaseClient.auth.updateUser({
+                        data: { payments: remotePayments }
+                    });
+                    if (!error) {
+                        currentUser = data.user;
+                    }
+                    console.log('[Supabase Sync] Synced payments to user_metadata:', remotePayments.length);
+                }
+            } catch (e) {
+                console.error('[Supabase Sync Error] Failed to sync payment metadata:', e);
+            }
+
+            // Always sort by date descending
+            payments.sort((a, b) => new Date(b.date) - new Date(a.date));
+
             const emptyState = document.getElementById('pembayaran-empty-state');
             const tableContainer = document.getElementById('pembayaran-table-container');
             const tbody = document.getElementById('pembayaran-tbody');
@@ -1117,8 +1157,22 @@
                 }
             }
 
-            if (hasChanges) {
+            if (hasChanges || hasSyncChanges) {
                 localStorage.setItem(storageKey, JSON.stringify(payments));
+                
+                // Sync updated statuses back to Supabase metadata as well
+                try {
+                    const { data, error } = await supabaseClient.auth.updateUser({
+                        data: { payments: payments }
+                    });
+                    if (!error) {
+                        currentUser = data.user;
+                    }
+                    console.log('[Supabase Status Sync] Updated payments in user_metadata');
+                } catch (err) {
+                    console.error('[Supabase Status Sync Error] Failed to update statuses:', err);
+                }
+                
                 // Instantly sync premium galleries if premium access was revoked or activated
                 initPremiumGalleries(userId);
             }
@@ -1241,7 +1295,27 @@
         // ----- PREMIUM SUBSCRIPTION CALCULATIONS & GALLERY LOGIC -----
         function getSubscriptionStatus(userId) {
             const storageKey = `payments_${userId}`;
-            const payments = JSON.parse(localStorage.getItem(storageKey)) || [];
+            let payments = JSON.parse(localStorage.getItem(storageKey)) || [];
+            
+            // Sync remote payments defensively to ensure mobile/other devices are instantly up to date
+            try {
+                const userMetadata = currentUser?.user_metadata || {};
+                let remotePayments = userMetadata.payments || [];
+                let hasNew = false;
+                remotePayments.forEach(rp => {
+                    if (!payments.some(lp => lp.order_id === rp.order_id)) {
+                        payments.push(rp);
+                        hasNew = true;
+                    }
+                });
+                if (hasNew) {
+                    payments.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    localStorage.setItem(storageKey, JSON.stringify(payments));
+                    console.log('[Dashboard Subscription status] Synced from metadata fallback');
+                }
+            } catch (e) {
+                console.error(e);
+            }
             
             let isPremium = false;
             let maxExpiryTime = 0;

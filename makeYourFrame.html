@@ -518,7 +518,26 @@
                         
                         // Check active subscription status
                         const paymentsKey = `payments_${userId}`;
-                        const payments = JSON.parse(localStorage.getItem(paymentsKey)) || [];
+                        
+                        // Pull remote payments from Supabase user_metadata to merge locally
+                        const userMetadata = session.user.user_metadata || {};
+                        let remotePayments = userMetadata.payments || [];
+                        let localPayments = JSON.parse(localStorage.getItem(paymentsKey)) || [];
+                        
+                        let payments = [...localPayments];
+                        let hasNew = false;
+                        remotePayments.forEach(rp => {
+                            if (!payments.some(lp => lp.order_id === rp.order_id)) {
+                                payments.push(rp);
+                                hasNew = true;
+                            }
+                        });
+                        
+                        if (hasNew) {
+                            payments.sort((a, b) => new Date(b.date) - new Date(a.date));
+                            localStorage.setItem(paymentsKey, JSON.stringify(payments));
+                        }
+
                         let isPremium = false;
                         
                         payments.forEach(p => {
