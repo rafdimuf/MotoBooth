@@ -481,13 +481,15 @@
         // Inisialisasi Supabase Client
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Dynamic target path for robust redirection in both local and hosted environments
-        const dashboardUrl = window.location.href.split('/').slice(0, -1).join('/') + '/Dashboard.html';
+        // Parse redirect URL parameter if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectParam = urlParams.get('redirect');
 
-        // Auto-forward to Dashboard if session already exists
+        // Auto-forward if session already exists
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
             if (session) {
-                window.location.replace('Dashboard.html');
+                const targetUrl = redirectParam || 'Dashboard.html';
+                window.location.replace(targetUrl);
             }
         });
 
@@ -498,12 +500,17 @@
                 e.preventDefault();
 
                 try {
+                    // Resolve final redirect URL for OAuth (must be absolute)
+                    const baseRedirect = window.location.href.split('/').slice(0, -1).join('/');
+                    const oauthRedirectUrl = redirectParam 
+                        ? `${baseRedirect}/${redirectParam}` 
+                        : `${baseRedirect}/Dashboard.html`;
+
                     // Lakukan sign-in dengan OAuth Google
                     const { error } = await supabaseClient.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
-                            // Redirect ke Dashboard.html setelah login sukses
-                            redirectTo: dashboardUrl
+                            redirectTo: oauthRedirectUrl
                         }
                     });
                     if (error) throw error;
@@ -535,7 +542,8 @@
                     if (error) throw error;
 
                     // Redirect setelah login sukses
-                    window.location.replace('Dashboard.html');
+                    const targetUrl = redirectParam || 'Dashboard.html';
+                    window.location.replace(targetUrl);
                 } catch (err) {
                     console.error("Gagal login email:", err.message);
                     alert("Login Gagal: " + err.message);
