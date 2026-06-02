@@ -260,7 +260,7 @@
         
         const isTemplate = selectedFrameType.startsWith('template_');
         // Render preview sesuai tipe frame
-        if (selectedFrameType === 'about_you' || isTemplate) {
+        if (selectedFrameType === 'about_you' || isTemplate || selectedFrameType === 'uploaded_frame') {
             const frameOverlayDOM = document.getElementById('frameOverlayDOM');
             if (frameOverlayDOM) {
                 let src = 'Frame/About you frame.png';
@@ -269,6 +269,7 @@
                 else if (selectedFrameType === 'template_3') src = 'Frame/Frame3.png';
                 else if (selectedFrameType === 'template_4') src = 'Frame/Frame4.png';
                 else if (selectedFrameType === 'template_5') src = 'Frame/Frame5.png';
+                else if (selectedFrameType === 'uploaded_frame') src = localStorage.getItem('uploaded_frame_data_url') || '';
                 
                 frameOverlayDOM.src = src;
                 frameOverlayDOM.style.display = 'block';
@@ -394,9 +395,9 @@
                     btn.innerText = "Memproses...";
                     btn.disabled = true;
 
-                    // === Tambahkan Overlay Frame jika berupa template atau 'about_you' (di bawah foto) ===
+                    // === Tambahkan Overlay Frame jika berupa template, 'about_you', atau 'uploaded_frame' (di bawah foto) ===
                     const isTemplate = selectedFrameType.startsWith('template_');
-                    if (selectedFrameType === 'about_you' || isTemplate) {
+                    if (selectedFrameType === 'about_you' || isTemplate || selectedFrameType === 'uploaded_frame') {
                         await new Promise((resolve, reject) => {
                             const frameImg = new Image();
                             frameImg.onload = () => {
@@ -411,6 +412,7 @@
                             else if (selectedFrameType === 'template_3') src = 'Frame/Frame3.png';
                             else if (selectedFrameType === 'template_4') src = 'Frame/Frame4.png';
                             else if (selectedFrameType === 'template_5') src = 'Frame/Frame5.png';
+                            else if (selectedFrameType === 'uploaded_frame') src = localStorage.getItem('uploaded_frame_data_url') || '';
                             
                             frameImg.src = src;
                         });

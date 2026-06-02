@@ -553,6 +553,30 @@
             }
         }
 
+        /* Checkerboard Pattern for transparent PNG frames */
+        .checkerboard-bg {
+            background-color: #fafbfc;
+            background-image: linear-gradient(45deg, #eef1f5 25%, transparent 25%),
+                              linear-gradient(-45deg, #eef1f5 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, #eef1f5 75%),
+                              linear-gradient(-45deg, transparent 75%, #eef1f5 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+
+        .gallery-card {
+            border-radius: 16px;
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05) !important;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+        }
+        .gallery-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+        }
+
         /* Ultra Premium SaaS Payment History Table */
         .transaction-row {
             background-color: #fafbfc;
@@ -705,26 +729,88 @@
 
         <!-- PANEL 2: FOTOKU -->
         <section class="dashboard-panel" id="panel-fotoku">
-            <div class="panel-card">
+            <div class="panel-card" style="max-width: 900px;">
                 <h2 class="panel-title">Fotoku</h2>
-                <div class="empty-state">
+                
+                <!-- Premium Locked State -->
+                <div id="fotoku-locked-state" style="display: none;">
+                    <div class="empty-state">
+                        <div style="width: 100px; height: 100px; background-color: #faf0e6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; color: var(--brand-brown);">
+                            <i class="fa-solid fa-lock" style="font-size: 38px;"></i>
+                        </div>
+                        <h3 class="empty-state-title">Fitur Premium Terkunci</h3>
+                        <p class="empty-state-desc">Penyimpanan galeri "Fotoku" adalah fitur eksklusif. Silakan berlangganan paket Premium (5 Hari / 30 Hari) yang aktif untuk dapat mengunggah dan menyimpan foto kenangan Anda selama 5 hari!</p>
+                        <a href="payment.html" class="btn-cta">Beli Paket Premium</a>
+                    </div>
+                </div>
+
+                <!-- Unlocked Empty State -->
+                <div class="empty-state" id="fotoku-empty-state" style="display: none;">
                     <i class="fa-regular fa-image empty-state-icon"></i>
                     <h3 class="empty-state-title">Belum Ada Foto</h3>
-                    <p class="empty-state-desc">Anda belum mengambil foto apapun menggunakan MotoBooth. Mari ambil foto keren pertamamu!</p>
-                    <a href="chooseFrame.html" class="btn-cta">Let's Take a Picture</a>
+                    <p class="empty-state-desc">Anda belum memiliki foto kustom di sini. Ayo unggah foto terbaik Anda atau ambil foto baru menggunakan bilik foto!</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <button class="btn btn-cta" onclick="document.getElementById('input-foto-uploader').click()"><i class="fa-solid fa-cloud-arrow-up me-1"></i> Unggah Foto</button>
+                        <a href="chooseFrame.html" class="btn-cancel-custom text-decoration-none m-0 py-3" style="line-height: 1;"><i class="fa-solid fa-camera me-1"></i> Mulai Berfoto</a>
+                    </div>
+                </div>
+
+                <!-- Premium Active Container -->
+                <div id="fotoku-premium-container" style="display: none;">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                        <p class="text-secondary mb-0" style="font-size: 14px;"><i class="fa-regular fa-clock me-1 text-warning"></i> Foto Anda disimpan aman selama maksimal 5 hari setelah diunggah.</p>
+                        <button class="btn btn-cta btn-sm py-2 px-3 m-0" onclick="document.getElementById('input-foto-uploader').click()"><i class="fa-solid fa-cloud-arrow-up me-1"></i> Unggah Foto Baru</button>
+                    </div>
+                    <input type="file" id="input-foto-uploader" accept="image/*" style="display: none;">
+                    
+                    <!-- Gallery Grid -->
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4" id="fotoku-gallery-grid">
+                        <!-- Rendered dynamically -->
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- PANEL 3: FRAMEKU -->
         <section class="dashboard-panel" id="panel-frameku">
-            <div class="panel-card">
+            <div class="panel-card" style="max-width: 900px;">
                 <h2 class="panel-title">Frameku</h2>
-                <div class="empty-state">
+                
+                <!-- Premium Locked State -->
+                <div id="frameku-locked-state" style="display: none;">
+                    <div class="empty-state">
+                        <div style="width: 100px; height: 100px; background-color: #faf0e6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; color: var(--brand-brown);">
+                            <i class="fa-solid fa-lock" style="font-size: 38px;"></i>
+                        </div>
+                        <h3 class="empty-state-title">Fitur Premium Terkunci</h3>
+                        <p class="empty-state-desc">Penyimpanan kustom "Frameku" adalah fitur eksklusif. Silakan berlangganan paket Premium (5 Hari / 30 Hari) yang aktif untuk dapat mengunggah dan menyimpan bingkai kreasi kustom Anda selama 5 hari!</p>
+                        <a href="payment.html" class="btn-cta">Beli Paket Premium</a>
+                    </div>
+                </div>
+
+                <!-- Unlocked Empty State -->
+                <div class="empty-state" id="frameku-empty-state" style="display: none;">
                     <i class="fa-regular fa-clone empty-state-icon"></i>
                     <h3 class="empty-state-title">Belum Ada Frame</h3>
-                    <p class="empty-state-desc">Ingin foto dengan bingkai kreasimu sendiri? Buat frame yang unik dan jadikan fotomu lebih kreatif!</p>
-                    <a href="makeYourFrame.html" class="btn-cta">Buat Frame</a>
+                    <p class="empty-state-desc">Anda belum memiliki bingkai kustom di galeri ini. Ayo buat bingkai kreatif kustom Anda atau unggah bingkai yang sudah ada!</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <button class="btn btn-cta" onclick="document.getElementById('input-frame-uploader').click()"><i class="fa-solid fa-cloud-arrow-up me-1"></i> Unggah Frame (PNG)</button>
+                        <a href="makeYourFrame.html" class="btn-cancel-custom text-decoration-none m-0 py-3" style="line-height: 1;"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Buat Frame Baru</a>
+                    </div>
+                </div>
+
+                <!-- Premium Active Container -->
+                <div id="frameku-premium-container" style="display: none;">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                        <p class="text-secondary mb-0" style="font-size: 14px;"><i class="fa-regular fa-clock me-1 text-warning"></i> Bingkai kustom Anda disimpan aman selama maksimal 5 hari setelah diunggah/dibuat.</p>
+                        <button class="btn btn-cta btn-sm py-2 px-3 m-0" onclick="document.getElementById('input-frame-uploader').click()"><i class="fa-solid fa-cloud-arrow-up me-1"></i> Unggah Frame Baru</button>
+                    </div>
+                    <input type="file" id="input-frame-uploader" accept="image/png" style="display: none;">
+                    
+                    <!-- Gallery Grid -->
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4" id="frameku-gallery-grid">
+                        <!-- Rendered dynamically -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -830,7 +916,11 @@
 
             // Load and Render Payment History
             loadPaymentHistory(user.id);
+
+            // Load and Render Premium Galleries (Fotoku and Frameku)
+            initPremiumGalleries(user.id);
         }
+
 
         // ----- SIDEMENU TABBING INTERACTION -----
         const menuItems = document.querySelectorAll('.sidebar-menu-item');
@@ -1059,6 +1149,347 @@
                     </td>
                 `;
                 tbody.appendChild(tr);
+            });
+        }
+
+        // ----- GLOBAL GALLERY REFERENCES & ACTION TRIGGERS -----
+        let activeUserId = null;
+
+        function deleteUserPhoto(photoId) {
+            if (!activeUserId) return;
+            if (confirm("Apakah Anda yakin ingin menghapus foto ini?")) {
+                const storageKey = `photos_${activeUserId}`;
+                let photos = JSON.parse(localStorage.getItem(storageKey)) || [];
+                photos = photos.filter(p => p.id !== photoId);
+                localStorage.setItem(storageKey, JSON.stringify(photos));
+                renderFotoku(activeUserId);
+                showToast("Foto berhasil dihapus!");
+            }
+        }
+
+        function deleteUserFrame(frameId) {
+            if (!activeUserId) return;
+            if (confirm("Apakah Anda yakin ingin menghapus bingkai kustom ini?")) {
+                const storageKey = `frames_${activeUserId}`;
+                let frames = JSON.parse(localStorage.getItem(storageKey)) || [];
+                frames = frames.filter(f => f.id !== frameId);
+                localStorage.setItem(storageKey, JSON.stringify(frames));
+                renderFrameku(activeUserId);
+                showToast("Bingkai berhasil dihapus!");
+            }
+        }
+
+        function useUserFrame(frameId) {
+            if (!activeUserId) return;
+            const storageKey = `frames_${activeUserId}`;
+            const frames = JSON.parse(localStorage.getItem(storageKey)) || [];
+            const frame = frames.find(f => f.id === frameId);
+            if (!frame) return;
+
+            if (frame.type === 'diy') {
+                localStorage.setItem('selected_frame_type', 'diy');
+                localStorage.setItem('motobooth_frame_config', JSON.stringify(frame.config));
+            } else if (frame.type === 'uploaded') {
+                localStorage.setItem('selected_frame_type', 'uploaded_frame');
+                localStorage.setItem('uploaded_frame_data_url', frame.dataUrl);
+            }
+            
+            showToast("Bingkai diaktifkan! Menuju ke studio foto...");
+            setTimeout(() => {
+                window.location.href = 'photoPage.html';
+            }, 1200);
+        }
+
+        // ----- PREMIUM SUBSCRIPTION CALCULATIONS & GALLERY LOGIC -----
+        function getSubscriptionStatus(userId) {
+            const storageKey = `payments_${userId}`;
+            const payments = JSON.parse(localStorage.getItem(storageKey)) || [];
+            
+            let isPremium = false;
+            let maxExpiryTime = 0;
+
+            payments.forEach(payment => {
+                if (payment.status === 'success') {
+                    const paymentTime = new Date(payment.date).getTime();
+                    let durationDays = 0;
+                    
+                    if (payment.gross_amount === 8000) {
+                        durationDays = 5;
+                    } else if (payment.gross_amount === 30000) {
+                        durationDays = 30;
+                    } else if (payment.gross_amount === 38000) { // combo
+                        durationDays = 35;
+                    }
+                    
+                    const expiryTime = paymentTime + (durationDays * 24 * 60 * 60 * 1000);
+                    if (expiryTime > Date.now()) {
+                        isPremium = true;
+                        if (expiryTime > maxExpiryTime) {
+                            maxExpiryTime = expiryTime;
+                        }
+                    }
+                }
+            });
+
+            return {
+                isPremium: isPremium,
+                expiryTime: maxExpiryTime
+            };
+        }
+
+        function initPremiumGalleries(userId) {
+            activeUserId = userId;
+            const sub = getSubscriptionStatus(userId);
+
+            const fotokuLocked = document.getElementById('fotoku-locked-state');
+            const fotokuEmpty = document.getElementById('fotoku-empty-state');
+            const fotokuPremium = document.getElementById('fotoku-premium-container');
+
+            const framekuLocked = document.getElementById('frameku-locked-state');
+            const framekuEmpty = document.getElementById('frameku-empty-state');
+            const framekuPremium = document.getElementById('frameku-premium-container');
+
+            if (!sub.isPremium) {
+                // LOCK BOTH GALLERIES FOR NON-PREMIUM USERS
+                fotokuLocked.style.display = 'block';
+                fotokuEmpty.style.display = 'none';
+                fotokuPremium.style.display = 'none';
+
+                framekuLocked.style.display = 'block';
+                framekuEmpty.style.display = 'none';
+                framekuPremium.style.display = 'none';
+                return;
+            }
+
+            // UNLOCKED: PROCESS GALLERIES
+            fotokuLocked.style.display = 'none';
+            framekuLocked.style.display = 'none';
+
+            // Render Fotoku
+            renderFotoku(userId);
+            // Render Frameku
+            renderFrameku(userId);
+
+            // Set up Upload Listeners for Photo
+            const inputFoto = document.getElementById('input-foto-uploader');
+            inputFoto.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const storageKey = `photos_${userId}`;
+                    let photos = JSON.parse(localStorage.getItem(storageKey)) || [];
+                    
+                    photos.unshift({
+                        id: `photo_${Date.now()}`,
+                        dataUrl: evt.target.result,
+                        date: new Date().toISOString()
+                    });
+
+                    localStorage.setItem(storageKey, JSON.stringify(photos));
+                    renderFotoku(userId);
+                    showToast("Foto berhasil diunggah!");
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Set up Upload Listeners for Frame
+            const inputFrame = document.getElementById('input-frame-uploader');
+            inputFrame.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const storageKey = `frames_${userId}`;
+                    let frames = JSON.parse(localStorage.getItem(storageKey)) || [];
+                    
+                    frames.unshift({
+                        id: `frame_${Date.now()}`,
+                        type: 'uploaded',
+                        dataUrl: evt.target.result,
+                        date: new Date().toISOString()
+                    });
+
+                    localStorage.setItem(storageKey, JSON.stringify(frames));
+                    renderFrameku(userId);
+                    showToast("Bingkai PNG berhasil diunggah!");
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderFotoku(userId) {
+            const storageKey = `photos_${userId}`;
+            let photos = JSON.parse(localStorage.getItem(storageKey)) || [];
+            
+            const emptyState = document.getElementById('fotoku-empty-state');
+            const premiumContainer = document.getElementById('fotoku-premium-container');
+            const grid = document.getElementById('fotoku-gallery-grid');
+
+            const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+            const now = Date.now();
+
+            // Auto-delete photos older than 5 days
+            const validPhotos = photos.filter(photo => {
+                const uploadTime = new Date(photo.date).getTime();
+                return (now - uploadTime) < FIVE_DAYS_MS;
+            });
+
+            if (validPhotos.length !== photos.length) {
+                localStorage.setItem(storageKey, JSON.stringify(validPhotos));
+            }
+
+            if (validPhotos.length === 0) {
+                emptyState.style.display = 'block';
+                premiumContainer.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            premiumContainer.style.display = 'block';
+            grid.innerHTML = '';
+
+            validPhotos.forEach(photo => {
+                const uploadTime = new Date(photo.date).getTime();
+                const timeLeftMs = FIVE_DAYS_MS - (now - uploadTime);
+                
+                // Calculate remaining time
+                const daysLeft = Math.floor(timeLeftMs / (24 * 60 * 60 * 1000));
+                const hoursLeft = Math.floor((timeLeftMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+                const minsLeft = Math.floor((timeLeftMs % (60 * 60 * 1000)) / (60 * 1000));
+                
+                let timeLeftStr = `${daysLeft}h ${hoursLeft}j`;
+                let badgeClass = 'bg-light text-danger';
+                if (daysLeft === 0) {
+                    timeLeftStr = `${hoursLeft}j ${minsLeft}m`;
+                    badgeClass = 'bg-danger text-white';
+                }
+
+                const formattedDate = new Date(photo.date).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+
+                const col = document.createElement('div');
+                col.className = 'col';
+                col.innerHTML = `
+                    <div class="card h-100 border-0 gallery-card">
+                        <div class="position-relative w-100" style="aspect-ratio: 4/5; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
+                            <img src="${photo.dataUrl}" style="width: 100%; height: 100%; object-fit: cover;" alt="My Photo">
+                        </div>
+                        <div class="card-body p-3 d-flex flex-column gap-2 justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-secondary small" style="font-weight: 500;">${formattedDate}</span>
+                                <span class="badge ${badgeClass} border"><i class="fa-solid fa-hourglass-half me-1"></i> Sisa ${timeLeftStr}</span>
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm border-0 w-100 mt-2 py-2" onclick="deleteUserPhoto('${photo.id}')" style="border-radius: 8px; font-weight: 600;"><i class="fa-regular fa-trash-can me-1"></i> Hapus Foto</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(col);
+            });
+        }
+
+        function renderFrameku(userId) {
+            const storageKey = `frames_${userId}`;
+            let frames = JSON.parse(localStorage.getItem(storageKey)) || [];
+            
+            const emptyState = document.getElementById('frameku-empty-state');
+            const premiumContainer = document.getElementById('frameku-premium-container');
+            const grid = document.getElementById('frameku-gallery-grid');
+
+            const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+            const now = Date.now();
+
+            // Auto-delete frames older than 5 days
+            const validFrames = frames.filter(frame => {
+                const uploadTime = new Date(frame.date).getTime();
+                return (now - uploadTime) < FIVE_DAYS_MS;
+            });
+
+            if (validFrames.length !== frames.length) {
+                localStorage.setItem(storageKey, JSON.stringify(validFrames));
+            }
+
+            if (validFrames.length === 0) {
+                emptyState.style.display = 'block';
+                premiumContainer.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            premiumContainer.style.display = 'block';
+            grid.innerHTML = '';
+
+            validFrames.forEach(frame => {
+                const uploadTime = new Date(frame.date).getTime();
+                const timeLeftMs = FIVE_DAYS_MS - (now - uploadTime);
+                
+                // Calculate remaining time
+                const daysLeft = Math.floor(timeLeftMs / (24 * 60 * 60 * 1000));
+                const hoursLeft = Math.floor((timeLeftMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+                const minsLeft = Math.floor((timeLeftMs % (60 * 60 * 1000)) / (60 * 1000));
+                
+                let timeLeftStr = `${daysLeft}h ${hoursLeft}j`;
+                let badgeClass = 'bg-light text-danger';
+                if (daysLeft === 0) {
+                    timeLeftStr = `${hoursLeft}j ${minsLeft}m`;
+                    badgeClass = 'bg-danger text-white';
+                }
+
+                const formattedDate = new Date(frame.date).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+
+                let cardContent = '';
+                if (frame.type === 'diy') {
+                    let accHtml = '';
+                    if (frame.config && frame.config.accessories) {
+                        frame.config.accessories.slice(0, 5).forEach(acc => {
+                            accHtml += `<div style="position: absolute; left: ${acc.leftPercent * 100}%; top: ${acc.topPercent * 100}%; font-size: 14px; color: ${acc.color}; pointer-events: none; transform: translate(-50%, -50%);">${acc.html}</div>`;
+                        });
+                    }
+                    cardContent = `
+                        <div class="position-relative w-100" style="aspect-ratio: 4/5; background-color: ${frame.config.backgroundColor || '#fafafa'}; border-radius: 12px; border: 1px solid rgba(0,0,0,0.06); overflow: hidden;">
+                            <div class="photo-slot" style="width: 80%; height: 20%; background: #e0e0e0; margin: 15px auto; border-radius: 4px; opacity: 0.3;"></div>
+                            <div class="photo-slot" style="width: 80%; height: 20%; background: #e0e0e0; margin: 15px auto; border-radius: 4px; opacity: 0.3;"></div>
+                            ${accHtml}
+                            <div class="position-absolute bottom-0 start-0 w-100 py-2 bg-dark text-white text-center small fw-bold" style="opacity: 0.85; font-size: 11px; z-index: 15;">
+                                <i class="fa-solid fa-wand-magic-sparkles me-1 text-warning"></i> DIY Frame
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    cardContent = `
+                        <div class="checkerboard-bg position-relative w-100" style="aspect-ratio: 4/5; border-radius: 12px; border: 1px solid rgba(0,0,0,0.06); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            <img src="${frame.dataUrl}" style="width: 100%; height: 100%; object-fit: contain;" alt="Custom PNG Frame">
+                        </div>
+                    `;
+                }
+
+                const col = document.createElement('div');
+                col.className = 'col';
+                col.innerHTML = `
+                    <div class="card h-100 border-0 gallery-card">
+                        <div class="p-3 pb-0" style="background: #ffffff;">
+                            ${cardContent}
+                        </div>
+                        <div class="card-body p-3 d-flex flex-column gap-2 justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-secondary small" style="font-weight: 500;">${formattedDate}</span>
+                                <span class="badge ${badgeClass} border"><i class="fa-solid fa-hourglass-half me-1"></i> Sisa ${timeLeftStr}</span>
+                            </div>
+                            <button class="btn btn-cta btn-sm w-100 py-2 mt-2" onclick="useUserFrame('${frame.id}')" style="border-radius: 8px; font-weight: 700; font-size: 13px;"><i class="fa-solid fa-camera me-1"></i> Gunakan Frame</button>
+                            <button class="btn btn-outline-danger btn-sm border-0 w-100 py-1" onclick="deleteUserFrame('${frame.id}')" style="border-radius: 8px; font-weight: 600; font-size: 12px;"><i class="fa-regular fa-trash-can me-1"></i> Hapus Frame</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(col);
             });
         }
     </script>

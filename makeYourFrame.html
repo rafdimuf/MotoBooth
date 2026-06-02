@@ -444,7 +444,7 @@
             document.getElementById('canvas-area').style.backgroundColor = color;
         }
 
-        function saveFrameConfig() {
+        async function saveFrameConfig() {
             const canvas = document.getElementById('canvas-area');
             const bgColor = canvas.style.backgroundColor || '#fafafa';
 
@@ -504,9 +504,59 @@
 
             localStorage.setItem('motobooth_frame_config', JSON.stringify(frameConfig));
             localStorage.setItem('selected_frame_type', 'diy');
+
+            // Save to Frameku if logged in & has premium active subscription
+            const SUPABASE_URL = "https://vpghdgbreksgwnvwlzvj.supabase.co"; 
+            const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZ2hkZ2JyZWtzZ3dudndsenZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NjAyMzAsImV4cCI6MjA5MzUzNjIzMH0.YFcb4jIQIVYOIWI-2ezPC4G8VsQtKmECU1zssU5tluo";
+            
+            if (window.supabase) {
+                try {
+                    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    const { data: { session } } = await supabaseClient.auth.getSession();
+                    if (session && session.user) {
+                        const userId = session.user.id;
+                        
+                        // Check active subscription status
+                        const paymentsKey = `payments_${userId}`;
+                        const payments = JSON.parse(localStorage.getItem(paymentsKey)) || [];
+                        let isPremium = false;
+                        
+                        payments.forEach(p => {
+                            if (p.status === 'success') {
+                                const pTime = new Date(p.date).getTime();
+                                let duration = 0;
+                                if (p.gross_amount === 8000) duration = 5;
+                                else if (p.gross_amount === 30000) duration = 30;
+                                else if (p.gross_amount === 38000) duration = 35;
+                                if (pTime + (duration * 24 * 60 * 60 * 1000) > Date.now()) {
+                                    isPremium = true;
+                                }
+                            }
+                        });
+
+                        if (isPremium) {
+                            const storageKey = `frames_${userId}`;
+                            let frames = JSON.parse(localStorage.getItem(storageKey)) || [];
+                            frames.unshift({
+                                id: `diy_${Date.now()}`,
+                                type: 'diy',
+                                config: frameConfig,
+                                date: new Date().toISOString()
+                            });
+                            localStorage.setItem(storageKey, JSON.stringify(frames));
+                            console.log('[Frameku] DIY Frame saved to active premium gallery');
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error saving DIY frame to Frameku:', e);
+                }
+            }
+
             window.location.href = 'photoPage.html';
         }
     </script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Shared Supabase Auth state synchronizer -->
     <script src="auth.js"></script>
     <!-- Mobile Menu Drawer Support -->
