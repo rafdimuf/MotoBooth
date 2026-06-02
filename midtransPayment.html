@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midtrans Secure Checkout - MotoBooth</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-glow: radial-gradient(rgba(60, 165, 92, 0.15), rgba(60, 165, 92, 0));
+            --secondary-glow: radial-gradient(rgba(66, 86, 122, 0.2), rgba(66, 86, 122, 0));
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0d0f12;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Glowing background blobs */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: var(--primary-glow);
+            top: -150px;
+            left: -150px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: var(--secondary-glow);
+            bottom: -150px;
+            right: -150px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .checkout-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            position: relative;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .brand-logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #3ca55c;
+            margin-bottom: 30px;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .brand-logo i {
+            font-size: 24px;
+        }
+
+        /* Modern Spinner */
+        .spinner-box {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-top-color: #3ca55c;
+            border-bottom-color: #42567a;
+            border-radius: 50%;
+            animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+        }
+
+        .spinner-inner {
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            border: 3px solid transparent;
+            border-left-color: rgba(255, 255, 255, 0.7);
+            border-right-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: spin-reverse 1s linear infinite;
+        }
+
+        .spinner-icon {
+            font-size: 20px;
+            color: #3ca55c;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .info-badge {
+            background: rgba(60, 165, 92, 0.1);
+            border: 1px solid rgba(60, 165, 92, 0.2);
+            color: #3ca55c;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .btn-retry {
+            background: #3ca55c;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(60, 165, 92, 0.3);
+        }
+
+        .btn-retry:hover {
+            background: #2d8146;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .footer-secure {
+            margin-top: 40px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spin-reverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        /* Fade-in states */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="checkout-container fade-in" id="cardContainer">
+        <div class="brand-logo">
+            <i class="fa-solid fa-bolt"></i> MotoBooth
+        </div>
+
+        <div id="statusArea">
+            <div class="spinner-box">
+                <div class="spinner-outer"></div>
+                <div class="spinner-inner"></div>
+                <i class="fa-solid fa-shield-halved spinner-icon"></i>
+            </div>
+            
+            <div class="info-badge">
+                <i class="fa-solid fa-lock"></i> Secured by Midtrans
+            </div>
+            
+            <h1>Menyiapkan Pembayaran Aman</h1>
+            <p id="statusMsg">Silakan tunggu sebentar, kami sedang menghubungkan Anda ke gerbang pembayaran aman Midtrans untuk memproses pesanan Anda...</p>
+        </div>
+
+        <div class="footer-secure">
+            <i class="fa-solid fa-circle-check"></i> Enkripsi SSL 256-bit Terenkripsi Aman
+        </div>
+    </div>
+
+    <!-- Inject Midtrans Snap JS. Defaults to Sandbox. Production URL would be https://app.midtrans.com/snap/snap.js -->
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"></script>
+    
+    <script>
+        // Get the snap token from the URL search parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const snapToken = urlParams.get('token');
+
+        const statusArea = document.getElementById('statusArea');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // Function to display error view if token is missing or payment fails
+        const showError = (message) => {
+            statusArea.innerHTML = `
+                <div class="spinner-box" style="border: 2px solid rgba(220, 53, 69, 0.2); border-radius: 50%; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 35px;">
+                    <i class="fa-solid fa-circle-xmark" style="font-size: 48px; color: #dc3545; animation: none;"></i>
+                </div>
+                <div class="info-badge" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.2); color: #dc3545;">
+                    <i class="fa-solid fa-circle-exclamation"></i> Terjadi Kesalahan
+                </div>
+                <h1>Gagal Memuat Pembayaran</h1>
+                <p style="margin-bottom: 20px;">${message}</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <a href="payment.html" class="btn-retry" style="background: #42567a; box-shadow: 0 4px 15px rgba(66, 86, 122, 0.2);"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+                    <button onclick="triggerPayment()" class="btn-retry"><i class="fa-solid fa-rotate-right"></i> Coba Lagi</button>
+                </div>
+            `;
+        };
+
+        const triggerPayment = () => {
+            if (!snapToken) {
+                showError("Token pembayaran tidak ditemukan. Silakan kembali ke halaman pemilihan paket dan lakukan proses pembayaran ulang.");
+                return;
+            }
+
+            if (typeof snap === 'undefined') {
+                showError("Gagal memuat pustaka pembayaran Midtrans. Pastikan koneksi internet Anda stabil.");
+                return;
+            }
+
+            statusMsg.innerText = "Membuka jendela pembayaran secure checkout...";
+
+            // Trigger Midtrans Snap payment modal
+            snap.pay(snapToken, {
+                onSuccess: function(result) {
+                    console.log('Payment Success:', result);
+                    statusMsg.innerText = "Pembayaran sukses! Mengalihkan Anda ke halaman konfirmasi...";
+                    
+                    // Construct callback success URL
+                    setTimeout(() => {
+                        window.location.href = `confirmPayment.html?status=success&order_id=${result.order_id}&gross_amount=${result.gross_amount}&payment_type=${result.payment_type}`;
+                    }, 1500);
+                },
+                onPending: function(result) {
+                    console.log('Payment Pending:', result);
+                    statusMsg.innerText = "Pembayaran tertunda/menunggu pembayaran. Mengalihkan...";
+                    
+                    setTimeout(() => {
+                        window.location.href = `confirmPayment.html?status=pending&order_id=${result.order_id}&gross_amount=${result.gross_amount}&payment_type=${result.payment_type}`;
+                    }, 1500);
+                },
+                onError: function(result) {
+                    console.error('Payment Error:', result);
+                    showError("Transaksi gagal atau dibatalkan oleh sistem bank. Silakan coba metode pembayaran lainnya.");
+                },
+                onClose: function() {
+                    console.log('Payment modal closed without completion');
+                    // Direct the user back to payment.html if they close the window
+                    window.location.href = 'payment.html';
+                }
+            });
+        };
+
+        // Automatically trigger payment modal on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Short delay to allow animations to play smoothly before modal overlays
+            setTimeout(triggerPayment, 1200);
+        });
+    </script>
+</body>
+</html>

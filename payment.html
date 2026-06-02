@@ -342,8 +342,17 @@
             btnBayar.disabled = true;
             btnBayar.innerText = "Memproses...";
 
-            // Send order creation request to PHP backend
-            fetch('php/placeOrder.php', {
+            // Dynamically resolve API URL to support local server, live server (port 5500), and Vercel/production deployment
+            let apiUrl = '/api/place-order';
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                if (window.location.port !== '3000' && window.location.port !== '') {
+                    // Fallback to Express backend port 3000 if opened via VS Code Live Server
+                    apiUrl = 'http://localhost:3000/api/place-order';
+                }
+            }
+
+            // Send order creation request to Node.js backend
+            fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -358,7 +367,7 @@
                 }
                 const contentType = response.headers.get("content-type");
                 if (!contentType || !contentType.includes("application/json")) {
-                    throw new Error("Server tidak mengembalikan respons JSON. Jika Anda menjalankan berkas ini menggunakan VS Code 'Live Server' (port 5500), berkas PHP placeOrder.php TIDAK BISA dieksekusi. Silakan jalankan menggunakan Local PHP Development Server (misal dengan perintah `php -S localhost:8000` di terminal) atau menggunakan Apache/XAMPP/Laragon.");
+                    throw new Error("Server tidak mengembalikan respons JSON. Pastikan server Node.js sudah dijalankan (misal dengan perintah `npm start` atau `node server.js` di terminal).");
                 }
                 return response.json();
             })
@@ -374,7 +383,7 @@
             })
             .catch(error => {
                 console.error("Midtrans Error:", error);
-                alert("Terjadi kesalahan:\n\n" + error.message);
+                alert("Terjadi kesalahan:\n\n" + error.message + "\n\nPastikan Anda sudah menjalankan server backend Node.js (`npm run dev` atau `node server.js`) pada port 3000.");
                 btnBayar.disabled = false;
                 btnBayar.innerText = "Bayar";
             });
