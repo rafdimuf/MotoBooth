@@ -100,6 +100,39 @@ app.post('/api/place-order', async (req, res) => {
   }
 });
 
+// Endpoint to check status of a transaction from Midtrans securely via server-side API
+app.get('/api/check-status/:orderId', async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    
+    // Initialize Snap client
+    const snap = new midtransClient.Snap({
+      isProduction: process.env.MIDTRANS_IS_PRODUCTION === 'true',
+      serverKey: process.env.MIDTRANS_SERVER_KEY,
+      clientKey: process.env.MIDTRANS_CLIENT_KEY
+    });
+    
+    // Retrieve transaction status directly from Midtrans Sandbox/Production API
+    const statusResponse = await snap.transaction.status(orderId);
+    
+    console.log(`[Status Sync] Order ID: ${orderId} -> Midtrans status: ${statusResponse.transaction_status}`);
+    
+    return res.json({
+      status: 'success',
+      transaction_status: statusResponse.transaction_status,
+      payment_type: statusResponse.payment_type,
+      gross_amount: statusResponse.gross_amount
+    });
+  } catch (error) {
+    console.error(`[Status Check Error] Order ID ${req.params.orderId}:`, error.message);
+    return res.status(404).json({
+      status: 'error',
+      message: 'Transaksi tidak ditemukan atau gagal menghubungkan ke Midtrans.',
+      error: error.message
+    });
+  }
+});
+
 // Start the MotoBooth Express server
 app.listen(PORT, () => {
   console.log(`===================================================`);

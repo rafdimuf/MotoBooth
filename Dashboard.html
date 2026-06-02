@@ -1070,9 +1070,9 @@
             });
         }
         // ----- LOAD & RENDER PAYMENT HISTORY -----
-        function loadPaymentHistory(userId) {
+        async function loadPaymentHistory(userId) {
             const storageKey = `payments_${userId}`;
-            const payments = JSON.parse(localStorage.getItem(storageKey)) || [];
+            let payments = JSON.parse(localStorage.getItem(storageKey)) || [];
             
             const emptyState = document.getElementById('pembayaran-empty-state');
             const tableContainer = document.getElementById('pembayaran-table-container');
@@ -1087,6 +1087,41 @@
             emptyState.style.display = 'none';
             tableContainer.style.display = 'block';
             tbody.innerHTML = '';
+
+            // Synchronize status with Midtrans Sandbox Server via local backend API
+            let hasChanges = false;
+            for (let i = 0; i < payments.length; i++) {
+                const payment = payments[i];
+                try {
+                    const res = await fetch(`/api/check-status/${payment.order_id}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        let midtransStatus = data.transaction_status;
+                        
+                        let newStatus = payment.status;
+                        if (midtransStatus === 'settlement' || midtransStatus === 'capture') {
+                            newStatus = 'success';
+                        } else if (midtransStatus === 'pending') {
+                            newStatus = 'pending';
+                        } else if (midtransStatus === 'cancel' || midtransStatus === 'deny' || midtransStatus === 'expire' || midtransStatus === 'refund') {
+                            newStatus = 'cancel';
+                        }
+                        
+                        if (payment.status !== newStatus) {
+                            payments[i].status = newStatus;
+                            hasChanges = true;
+                        }
+                    }
+                } catch (err) {
+                    console.warn(`[Dashboard Sync Warning] Gagal sinkronisasi order ${payment.order_id}:`, err);
+                }
+            }
+
+            if (hasChanges) {
+                localStorage.setItem(storageKey, JSON.stringify(payments));
+                // Instantly sync premium galleries if premium access was revoked or activated
+                initPremiumGalleries(userId);
+            }
 
             const formatRupiah = (number) => {
                 return new Intl.NumberFormat('id-ID', {
@@ -1127,6 +1162,9 @@
                 } else if (payment.status === 'pending') {
                     statusText = 'Menunggu';
                     statusClass = 'pending';
+                } else if (payment.status === 'cancel') {
+                    statusText = 'Dibatalkan';
+                    statusClass = 'error';
                 }
 
                 const tr = document.createElement('tr');
