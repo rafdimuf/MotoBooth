@@ -85,7 +85,8 @@
         }
 
         .frame-card {
-            --frame-scale: 0.26; /* Skala preview di halaman pemilihan template */
+            --frame-scale: 0.26;
+            /* Skala preview di halaman pemilihan template */
             background: white;
             border: 1px solid #777;
             width: calc(800px * var(--frame-scale));
@@ -278,9 +279,17 @@
         }
 
         @keyframes lockPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
     </style>
 </head>
@@ -315,92 +324,101 @@
     <div class="container frame-container">
         <!-- Unified Grid: Auto-wraps 4, 4, 2 centered -->
         <div class="row w-100 justify-content-center g-4">
-            
+
             <!-- Template 1: Perkoro koe -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card" onclick="selectFrame(this, 'template_1')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame1.png" alt="Perkoro koe Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame1.png" alt="Perkoro koe Frame"
+                        class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Perkoro koe</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
             <!-- Template 2: Opo ono ne -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card" onclick="selectFrame(this, 'template_2')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame2.png" alt="Opo ono ne Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame2.png" alt="Opo ono ne Frame"
+                        class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Opo ono ne</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
             <!-- Template 3: Demit -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card" onclick="selectFrame(this, 'template_3')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame3.png" alt="Demit Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame3.png" alt="Demit Frame" class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Demit</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
             <!-- Template 4: Teu ngarasa -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card" onclick="selectFrame(this, 'template_4')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame4.png" alt="Teu ngarasa Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame4.png" alt="Teu ngarasa Frame"
+                        class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Teu ngarasa</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
             <!-- Template 5: Kabeh tentang mu -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card" onclick="selectFrame(this, 'template_5')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame5.png" alt="Kabeh tentang mu Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame5.png" alt="Kabeh tentang mu Frame"
+                        class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Kabeh tentang mu</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
             <!-- Template 6: Konco mesra (Premium) -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card locked" id="card-template_6" onclick="selectFrame(this, 'template_6')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Premium Lock Overlay -->
                     <div class="premium-locked-overlay">
                         <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
@@ -409,21 +427,23 @@
                     </div>
 
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame6.png" alt="Konco mesra Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame6.png" alt="Konco mesra Frame"
+                        class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Konco mesra</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
             <!-- Template 7: Tresno warangka (Premium) -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card locked" id="card-template_7" onclick="selectFrame(this, 'template_7')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Premium Lock Overlay -->
                     <div class="premium-locked-overlay">
                         <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
@@ -432,21 +452,23 @@
                     </div>
 
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame7.png" alt="Tresno warangka Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame7.png" alt="Tresno warangka Frame"
+                        class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Tresno warangka</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
             <!-- Template 8: Crito loro (Premium) -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card locked" id="card-template_8" onclick="selectFrame(this, 'template_8')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Premium Lock Overlay -->
                     <div class="premium-locked-overlay">
                         <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
@@ -455,21 +477,23 @@
                     </div>
 
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame8.png" alt="Crito loro Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame8.png" alt="Crito loro Frame"
+                        class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Crito loro</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
             <!-- Template 9: Guyon waton (Premium) -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card locked" id="card-template_9" onclick="selectFrame(this, 'template_9')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Premium Lock Overlay -->
                     <div class="premium-locked-overlay">
                         <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
@@ -478,30 +502,33 @@
                     </div>
 
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame9.png" alt="Guyon waton Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame9.png" alt="Guyon waton Frame"
+                        class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Guyon waton</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
             <!-- Template 10: Rungkad (Free) -->
             <div class="col-md-3 d-flex flex-column align-items-center mb-4">
                 <div class="frame-card" onclick="selectFrame(this, 'template_10')">
                     <div class="check-badge"><i class="fa-solid fa-check"></i></div>
-                    
+
                     <!-- Frame Overlay -->
-                    <img src="Frame/Frame10.png" alt="Rungkad Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                    <img src="Frame/Frame10.png" alt="Rungkad Frame" class="position-absolute top-0 start-0 w-100 h-100"
+                        style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="frame-bottom"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted fs-5">Rungkad</div>
+                <div class="mt-3 text-center fw-bold text-muted fs-5"></div>
             </div>
 
         </div>
@@ -517,8 +544,10 @@
     <div class="modal fade" id="premiumModal" tabindex="-1" aria-labelledby="premiumModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-                <div class="modal-header border-0 bg-light p-4" style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
-                    <h5 class="modal-title fw-extrabold text-dark d-flex align-items-center" id="premiumModalLabel" style="font-weight: 800;">
+                <div class="modal-header border-0 bg-light p-4"
+                    style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
+                    <h5 class="modal-title fw-extrabold text-dark d-flex align-items-center" id="premiumModalLabel"
+                        style="font-weight: 800;">
                         <i class="fa-solid fa-crown text-warning me-2 fs-4"></i> Akses Premium Diperlukan
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -528,7 +557,8 @@
                         <i class="fa-solid fa-lock fa-3x mb-3" style="color: #ff5e62;"></i>
                     </div>
                     <p class="fs-5 fw-bold mb-2">Buka Frame Premium Ini!</p>
-                    <p class="text-muted fs-6">Frame ini adalah bagian dari fitur Premium MotoBooth. Dapatkan akses penuh ke seluruh template premium, DIY frame saving, dan keunggulan lainnya.</p>
+                    <p class="text-muted fs-6">Frame ini adalah bagian dari fitur Premium MotoBooth. Dapatkan akses
+                        penuh ke seluruh template premium, DIY frame saving, dan keunggulan lainnya.</p>
                     <div class="bg-light p-3 rounded-3 mb-4 d-flex align-items-center justify-content-between">
                         <div class="text-start">
                             <span class="badge bg-danger mb-1" style="font-size: 10px;">PROMO SPESIAL</span>
@@ -541,8 +571,11 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0 d-flex gap-2">
-                    <button type="button" class="btn btn-secondary flex-grow-1 py-2 fw-bold" data-bs-dismiss="modal" style="border-radius: 8px;">Nanti Saja</button>
-                    <a href="payment.html" class="btn btn-success flex-grow-1 py-2 fw-bold" style="border-radius: 8px; background-color: #3ddc68; border: none; text-align: center; text-decoration: none; color: white;">Beli Sekarang</a>
+                    <button type="button" class="btn btn-secondary flex-grow-1 py-2 fw-bold" data-bs-dismiss="modal"
+                        style="border-radius: 8px;">Nanti Saja</button>
+                    <a href="payment.html" class="btn btn-success flex-grow-1 py-2 fw-bold"
+                        style="border-radius: 8px; background-color: #3ddc68; border: none; text-align: center; text-decoration: none; color: white;">Beli
+                        Sekarang</a>
                 </div>
             </div>
         </div>
@@ -590,24 +623,24 @@
         });
 
         // Logika Pengecekan & Pembukaan Kunci Premium
-        const SUPABASE_URL = "https://vpghdgbreksgwnvwlzvj.supabase.co"; 
+        const SUPABASE_URL = "https://vpghdgbreksgwnvwlzvj.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZ2hkZ2JyZWtzZ3dudndsenZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NjAyMzAsImV4cCI6MjA5MzUzNjIzMH0.YFcb4jIQIVYOIWI-2ezPC4G8VsQtKmECU1zssU5tluo";
-        
+
         async function checkAndUnlockPremium() {
             if (!window.supabase) return;
             try {
                 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 const { data: { session } } = await supabaseClient.auth.getSession();
-                
+
                 if (session && session.user) {
                     const userId = session.user.id;
                     const paymentsKey = `payments_${userId}`;
-                    
+
                     // Ambil riwayat pembayaran dari user_metadata (Supabase) dan localStorage lokal
                     const userMetadata = session.user.user_metadata || {};
                     let remotePayments = userMetadata.payments || [];
                     let localPayments = JSON.parse(localStorage.getItem(paymentsKey)) || [];
-                    
+
                     // Gabungkan keduanya agar tidak ada data yang terlewat
                     let payments = [...localPayments];
                     let hasNew = false;
@@ -617,15 +650,15 @@
                             hasNew = true;
                         }
                     });
-                    
+
                     if (hasNew) {
                         payments.sort((a, b) => new Date(b.date) - new Date(a.date));
                         localStorage.setItem(paymentsKey, JSON.stringify(payments));
                         console.log('[Supabase Sync] Pulled premium payments from remote session');
                     }
-                    
+
                     let isPremium = false;
-                    
+
                     payments.forEach(p => {
                         if (p.status === 'success') {
                             const pTime = new Date(p.date).getTime();
@@ -638,7 +671,7 @@
                             }
                         }
                     });
-                    
+
                     if (isPremium) {
                         // User terdeteksi premium, buka kunci untuk Frame 6, 7, 8, 9
                         const lockedFrames = document.querySelectorAll('.frame-card.locked');

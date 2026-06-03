@@ -254,16 +254,19 @@
         }
 
         // Ambil tipe frame yang terpilih
-        const selectedFrameType = localStorage.getItem('selected_frame_type') || (frameConfigStr ? 'diy' : 'about_you');
+        let selectedFrameType = localStorage.getItem('selected_frame_type') || (frameConfigStr ? 'diy' : 'default_1');
+        if (selectedFrameType === 'about_you') {
+            selectedFrameType = 'default_1';
+        }
 
         const photostripDOM = document.getElementById('photostripDOM');
         
         const isTemplate = selectedFrameType.startsWith('template_');
         // Render preview sesuai tipe frame
-        if (selectedFrameType === 'about_you' || isTemplate || selectedFrameType === 'uploaded_frame') {
+        if (isTemplate || selectedFrameType === 'uploaded_frame') {
             const frameOverlayDOM = document.getElementById('frameOverlayDOM');
             if (frameOverlayDOM) {
-                let src = 'Frame/About you frame.png';
+                let src = '';
                 if (selectedFrameType === 'template_1') src = 'Frame/Frame1.png';
                 else if (selectedFrameType === 'template_2') src = 'Frame/Frame2.png';
                 else if (selectedFrameType === 'template_3') src = 'Frame/Frame3.png';
@@ -292,6 +295,8 @@
                 el.style.top = (acc.topPercent * 100) + '%';
                 photostripDOM.appendChild(el);
             });
+        } else if (selectedFrameType === 'default_1') {
+            photostripDOM.style.backgroundColor = '#ffffff';
         } else if (selectedFrameType === 'default_2') {
             photostripDOM.style.backgroundColor = '#BFDDF0';
         } else if (selectedFrameType === 'default_3') {
@@ -338,6 +343,8 @@
             let bgCol = '#ffffff';
             if (selectedFrameType === 'diy') {
                 bgCol = frameConfig.backgroundColor || '#ffffff';
+            } else if (selectedFrameType === 'default_1') {
+                bgCol = '#ffffff';
             } else if (selectedFrameType === 'default_2') {
                 bgCol = '#BFDDF0';
             } else if (selectedFrameType === 'default_3') {
@@ -400,9 +407,9 @@
                     btn.innerText = "Memproses...";
                     btn.disabled = true;
 
-                    // === Tambahkan Overlay Frame jika berupa template, 'about_you', atau 'uploaded_frame' (di bawah foto) ===
+                    // === Tambahkan Overlay Frame jika berupa template atau 'uploaded_frame' (di bawah foto) ===
                     const isTemplate = selectedFrameType.startsWith('template_');
-                    if (selectedFrameType === 'about_you' || isTemplate || selectedFrameType === 'uploaded_frame') {
+                    if (isTemplate || selectedFrameType === 'uploaded_frame') {
                         await new Promise((resolve, reject) => {
                             const frameImg = new Image();
                             frameImg.onload = () => {
@@ -411,7 +418,7 @@
                             };
                             frameImg.onerror = () => reject(new Error('Gagal memuat frame image'));
                             
-                            let src = 'Frame/About you frame.png';
+                            let src = '';
                             if (selectedFrameType === 'template_1') src = 'Frame/Frame1.png';
                             else if (selectedFrameType === 'template_2') src = 'Frame/Frame2.png';
                             else if (selectedFrameType === 'template_3') src = 'Frame/Frame3.png';
@@ -460,8 +467,8 @@
                         });
                     }
 
-                    // === Tambahkan Ornamen Teks MotoBooth jika bukan tipe template dan bukan 'about_you' ===
-                    if (selectedFrameType !== 'about_you' && !selectedFrameType.startsWith('template_')) {
+                    // === Tambahkan Ornamen Teks MotoBooth jika bukan tipe template ===
+                    if (!selectedFrameType.startsWith('template_')) {
                         // Desain font
                         ctx.fillStyle = '#1a1a1a';
                         ctx.font = 'bold 50px Outfit, sans-serif';

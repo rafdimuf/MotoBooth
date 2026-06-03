@@ -87,7 +87,8 @@
         }
 
         .frame-card {
-            --frame-scale: 0.26; /* Skala preview di halaman pemilihan frame */
+            --frame-scale: 0.26;
+            /* Skala preview di halaman pemilihan frame */
             background: white;
             border: 1px solid #777;
             width: calc(800px * var(--frame-scale));
@@ -265,19 +266,15 @@
 
             <!-- Frame 1 -->
             <div class="col-md-4 d-flex flex-column align-items-center">
-                <div class="frame-card position-relative" onclick="selectFrame(this, 'about_you')">
-                    <!-- Badge centang yang akan muncul saat aktif -->
-                    <div class="check-badge" style="z-index: 15;"><i class="fa-solid fa-check"></i></div>
-
-                    <!-- Frame Overlay Image -->
-                    <img src="Frame/About you frame.png" alt="About You Frame" class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: fill; z-index: 5; pointer-events: none; border-radius: inherit;">
+                <div class="frame-card" style="background-color: #ffffff;" onclick="selectFrame(this, 'default_1')">
+                    <div class="check-badge"><i class="fa-solid fa-check"></i></div>
 
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
                     <div class="photo-block">[Photo]</div>
-                    <div class="frame-bottom"></div>
+                    <div class="frame-bottom" style="background-color: #ffffff;"></div>
                 </div>
-                <div class="mt-3 text-center fw-bold text-muted">About You Frame</div>
+                <div class="mt-3 text-center fw-bold text-muted">Classic White Frame</div>
             </div>
 
             <!-- Frame 2 -->
